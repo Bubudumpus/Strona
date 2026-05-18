@@ -112,6 +112,15 @@
     background: radial-gradient(ellipse at center, #0d1627 0%, #0a0e1a 70%);
   }
   #page-login.active { display: flex; }
+  body.is-authenticated #page-login {
+    display: none !important;
+    visibility: hidden !important;
+    min-height: 0 !important;
+    height: 0 !important;
+    overflow: hidden !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
   .login-logo {
     text-align: center;
   }
@@ -982,9 +991,16 @@ async function initDB() {
    ROUTING — nawigacja między stronami
 ═══════════════════════════════════════════════════════════════ */
 function showPage(pageId) {
+  document.body.classList.toggle('is-authenticated', pageId !== 'login');
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  const loginPage = document.getElementById('page-login');
+  if (loginPage) {
+    loginPage.hidden = pageId !== 'login';
+    loginPage.style.display = pageId === 'login' ? '' : 'none';
+  }
   const page = document.getElementById('page-' + pageId);
   if (page) {
+    page.hidden = false;
     page.style.display = '';
     page.classList.add('active');
   }
@@ -999,9 +1015,11 @@ function showPage(pageId) {
 }
 
 function hideLoginPage() {
+  document.body.classList.add('is-authenticated');
   const loginPage = document.getElementById('page-login');
   if (loginPage) {
     loginPage.classList.remove('active');
+    loginPage.hidden = true;
     loginPage.style.display = 'none';
   }
 }
@@ -1201,6 +1219,7 @@ function logout() {
   localStorage.removeItem('edr_token');
   currentUser = null;
   currentDyzurka = null;
+  document.body.classList.remove('is-authenticated');
   if (clockInterval) { clearInterval(clockInterval); clockInterval = null; }
   showToast('Wylogowano z systemu', 'success');
   showPage('login');
