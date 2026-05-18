@@ -1069,6 +1069,40 @@
     border-color: #777 #fff #fff #777;
     padding: 18px;
   }
+  body.is-authenticated .driver-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 320px;
+    gap: 6px;
+    align-items: start;
+  }
+  body.is-authenticated .station-pick-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 4px;
+    max-height: 260px;
+    overflow: auto;
+    padding: 4px;
+    background: #fffde8;
+    border: 2px solid;
+    border-color: #777 #fff #fff #777;
+  }
+  body.is-authenticated .station-pick-item {
+    display: grid;
+    grid-template-columns: auto 1fr auto auto;
+    gap: 5px;
+    align-items: center;
+    padding: 3px 5px;
+    border: 1px solid #b8b4a8;
+    background: #f4f1da;
+    color: #111;
+  }
+  body.is-authenticated .station-pick-item .station-code {
+    color: #0b3f7a;
+    font-weight: 700;
+    font-family: "Courier New", monospace;
+  }
+  body.is-authenticated .danger-details { display: none; }
+  body.is-authenticated .danger-details.visible { display: block; }
   body.is-authenticated #toast {
     background: #fffde8;
     color: #111;
@@ -1141,6 +1175,7 @@
   <div class="page-inner">
     <div class="page-header">
       <div class="page-title">Panel Administracyjny<span id="admin-greeting">—</span></div>
+      <button class="btn" onclick="navigate('/driver')">Zaloguj jako maszynista</button>
     </div>
 
     <!-- TABS -->
@@ -1248,12 +1283,107 @@
   <div class="page-inner">
     <div class="page-header">
       <div class="page-title">Pulpit Dyżurnego<span id="dashboard-greeting">—</span></div>
-      <div style="font-size:11px;color:var(--text3);text-align:right">
-        Dostęp do <span id="dashboard-count" class="text-accent">—</span> posterunków
+      <div style="display:flex;gap:10px;align-items:center">
+        <div style="font-size:11px;color:var(--text3);text-align:right">
+          Dostęp do <span id="dashboard-count" class="text-accent">—</span> posterunków
+        </div>
+        <button class="btn" onclick="navigate('/driver')">Zaloguj jako maszynista</button>
       </div>
     </div>
     <div id="dashboard-dyzurki-grid" class="dyzurka-grid">
       <div class="empty-state">Ładowanie...</div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════
+     PAGE: MASZYNISTA — TWORZENIE SKŁADU
+════════════════════════════════════════════════ -->
+<div id="page-driver" class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-title">Panel Maszynisty<span id="driver-greeting">Nowy skład</span></div>
+      <button class="btn" onclick="goBack()">← Wróć</button>
+    </div>
+
+    <div class="driver-layout">
+      <div class="card">
+        <div class="card-title">Formularz tworzenia składu</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Numer pociągu</label>
+            <input class="form-input" id="driver-train-number" placeholder="np. 44817">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Kategoria pociągu</label>
+            <select class="form-select" id="driver-train-category">
+              <option value="APM">APM</option>
+              <option value="RPE">RPE</option>
+              <option value="TMS">TMS</option>
+              <option value="TME">TME</option>
+              <option value="TCE">TCE</option>
+              <option value="TLS">TLS</option>
+              <option value="TKS">TKS</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Stacja początkowa</label>
+            <select class="form-select" id="driver-start-station"></select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Stacja końcowa</label>
+            <select class="form-select" id="driver-end-station"></select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Stacje pośrednie / postój handlowy PH</label>
+          <div class="station-pick-list" id="driver-mid-stations"></div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Masa brutto [t]</label>
+            <input class="form-input" id="driver-train-mass" type="number" min="0" placeholder="np. 1420">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Długość [m]</label>
+            <input class="form-input" id="driver-train-length" type="number" min="0" placeholder="np. 568">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Towary niebezpieczne</label>
+            <select class="form-select" id="driver-dangerous" onchange="toggleDangerDetails()">
+              <option value="nie">Nie</option>
+              <option value="tak">Tak</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group danger-details" id="driver-danger-details-wrap">
+          <label class="form-label">Jakie towary niebezpieczne?</label>
+          <textarea class="form-input" id="driver-danger-details" rows="3" placeholder="np. UN 1203 benzyna, RID kl. 3"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Uwagi</label>
+          <textarea class="form-input" id="driver-train-notes" rows="4" placeholder="Uwagi eksploatacyjne, ograniczenia, informacje dla dyżurnego..."></textarea>
+        </div>
+
+        <div class="modal-actions">
+          <button class="btn" onclick="clearDriverForm()">Wyczyść</button>
+          <button class="btn-primary" style="width:auto;padding:9px 24px" onclick="saveDriverTrain()">Utwórz skład</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Utworzone składy</div>
+        <div id="driver-created-trains" style="max-height:520px;overflow:auto">
+          <div class="empty-state">Brak utworzonych składów</div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -1328,11 +1458,12 @@
             <table class="dziennik-table edr-timetable" id="edr-trains-table">
               <thead>
                 <tr>
-                  <th>K</th><th>NK</th><th>Prz. plan.</th><th>+/-</th><th>Prz. rzecz.</th><th>Rodz.</th>
-                  <th>Z kierunku post.</th><th>Nr poc.</th><th>Nr poc.</th><th>W kierunku post.</th>
-                  <th>Nr L.</th><th>P. zam.</th><th>P. obl.</th><th>Typ p.</th>
-                  <th>Odj. plan.</th><th>+/-</th><th>Odj. rzecz.</th>
-                  <th>Stacja początkowa</th><th>Stacja końcowa</th><th>Przewoźnik</th>
+                  <th>K</th><th>NK</th>
+                  <th>Przyjazd<br>planowo</th><th>+/-</th><th>Przyjazd<br>rzeczyw.</th>
+                  <th>Rodz.</th><th>Numer</th><th>Maszynista</th>
+                  <th>Ze scenerii</th><th>Przez</th><th>Do scenerii</th><th>Postój</th>
+                  <th>Odjazd<br>planowo</th><th>+/-</th><th>Odjazd<br>rzeczyw.</th>
+                  <th>Relacja</th>
                 </tr>
               </thead>
               <tbody id="edr-trains-tbody"></tbody>
@@ -1504,6 +1635,7 @@ function verifyToken(token) {
 let currentUser = null;
 let currentDyzurka = null;
 let clockInterval = null;
+let driverRouteState = [];
 
 const DISCORD_CLIENT_ID = '1487149572236116118';
 const DISCORD_ADMIN_ID = '493468210570461195';
@@ -1609,6 +1741,13 @@ function navigate(path, params = {}) {
     }
     showPage('dashboard');
     renderDashboard();
+    return;
+  }
+
+  if (path === '/driver') {
+    currentUser = user;
+    showPage('driver');
+    renderDriverForm();
     return;
   }
 
@@ -2028,6 +2167,140 @@ function renderDashboard() {
 }
 
 /* ═══════════════════════════════════════════════════════════════
+   MASZYNISTA — FORMULARZ SKŁADU
+═══════════════════════════════════════════════════════════════ */
+function renderDriverForm() {
+  const user = getSession();
+  document.getElementById('driver-greeting').textContent = user ? user.fullname || user.login : 'Nowy skład';
+
+  const stations = DB.get('dyzurki').filter(d => d.is_active);
+  const stationOptions = stations
+    .map(s => `<option value="${s.id}">${s.name} (${s.code})</option>`)
+    .join('');
+
+  document.getElementById('driver-start-station').innerHTML = '<option value="">— wybierz —</option>' + stationOptions;
+  document.getElementById('driver-end-station').innerHTML = '<option value="">— wybierz —</option>' + stationOptions;
+
+  driverRouteState = stations.map(s => ({ stationId: s.id, ph: false }));
+  document.getElementById('driver-mid-stations').innerHTML = stations.map(s => `
+    <label class="station-pick-item">
+      <input type="checkbox" class="driver-mid-station" value="${s.id}">
+      <span><span class="station-code">${s.code}</span> ${s.name}</span>
+      <span>PH</span>
+      <input type="checkbox" class="driver-mid-ph" data-station-id="${s.id}">
+    </label>
+  `).join('') || '<div class="empty-state">Brak aktywnych stacji do wyboru.</div>';
+
+  renderDriverCreatedTrains();
+  toggleDangerDetails();
+}
+
+function toggleDangerDetails() {
+  const hasDanger = document.getElementById('driver-dangerous')?.value === 'tak';
+  document.getElementById('driver-danger-details-wrap')?.classList.toggle('visible', hasDanger);
+}
+
+function clearDriverForm() {
+  ['driver-train-number','driver-train-mass','driver-train-length','driver-danger-details','driver-train-notes'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  document.getElementById('driver-train-category').value = 'APM';
+  document.getElementById('driver-start-station').value = '';
+  document.getElementById('driver-end-station').value = '';
+  document.getElementById('driver-dangerous').value = 'nie';
+  document.querySelectorAll('.driver-mid-station,.driver-mid-ph').forEach(el => { el.checked = false; });
+  toggleDangerDetails();
+}
+
+function saveDriverTrain() {
+  const user = getSession();
+  const dyzurki = DB.get('dyzurki');
+  const trainNumber = document.getElementById('driver-train-number').value.trim();
+  const category = document.getElementById('driver-train-category').value;
+  const startId = parseInt(document.getElementById('driver-start-station').value);
+  const endId = parseInt(document.getElementById('driver-end-station').value);
+  const mass = document.getElementById('driver-train-mass').value.trim();
+  const length = document.getElementById('driver-train-length').value.trim();
+  const dangerous = document.getElementById('driver-dangerous').value === 'tak';
+  const dangerousDetails = document.getElementById('driver-danger-details').value.trim();
+  const notes = document.getElementById('driver-train-notes').value.trim();
+
+  if (!trainNumber) { showToast('Podaj numer pociągu', 'error'); return; }
+  if (!startId || !endId) { showToast('Wybierz stację początkową i końcową', 'error'); return; }
+  if (startId === endId) { showToast('Stacja początkowa i końcowa muszą być różne', 'error'); return; }
+  if (!mass || !length) { showToast('Podaj masę i długość składu', 'error'); return; }
+  if (dangerous && !dangerousDetails) { showToast('Wpisz jakie towary niebezpieczne przewozi skład', 'error'); return; }
+
+  const midStations = Array.from(document.querySelectorAll('.driver-mid-station:checked'))
+    .map(el => parseInt(el.value))
+    .filter(id => id !== startId && id !== endId)
+    .map(id => ({
+      stationId: id,
+      ph: !!document.querySelector(`.driver-mid-ph[data-station-id="${id}"]`)?.checked
+    }));
+
+  const route = [
+    { stationId: startId, ph: true },
+    ...midStations,
+    { stationId: endId, ph: true }
+  ];
+
+  const trains = DB.get('trains');
+  if (trains.some(t => t.number === trainNumber)) {
+    showToast(`Pociąg ${trainNumber} już istnieje w wykazie`, 'error');
+    return;
+  }
+
+  trains.push({
+    id: DB.nextId('trains'),
+    number: trainNumber,
+    category,
+    route,
+    mass: Number(mass),
+    length: Number(length),
+    dangerous,
+    dangerousDetails,
+    notes,
+    driver_user_id: user ? user.id : null,
+    driver_name: user ? (user.fullname || user.login) : 'Maszynista',
+    created_at: new Date().toISOString()
+  });
+
+  DB.set('trains', trains);
+  clearDriverForm();
+  renderDriverCreatedTrains();
+  showToast(`Utworzono skład ${trainNumber}`, 'success');
+}
+
+function renderDriverCreatedTrains() {
+  const container = document.getElementById('driver-created-trains');
+  if (!container) return;
+
+  const stationMap = getStationMap();
+  const trains = DB.get('trains').slice().reverse();
+  if (!trains.length) {
+    container.innerHTML = '<div class="empty-state">Brak utworzonych składów</div>';
+    return;
+  }
+
+  container.innerHTML = trains.map(t => {
+    const first = stationMap.get(t.route[0]?.stationId);
+    const last = stationMap.get(t.route[t.route.length - 1]?.stationId);
+    return `
+      <div class="station-pick-item" style="grid-template-columns:1fr auto">
+        <span><strong>${t.number}</strong> ${t.category}<br>${first?.name || '?'} → ${last?.name || '?'}</span>
+        <span>${t.mass} t / ${t.length} m</span>
+      </div>
+    `;
+  }).join('');
+}
+
+function getStationMap() {
+  return new Map(DB.get('dyzurki').map(d => [d.id, d]));
+}
+
+/* ═══════════════════════════════════════════════════════════════
    EDR — WNĘTRZE DYŻURKI
 ═══════════════════════════════════════════════════════════════ */
 function renderEDR(dyzurka) {
@@ -2086,124 +2359,71 @@ function renderTrains(dyzurka) {
   if (!dyzurka) return;
 
   const query = (document.getElementById('edr-train-search')?.value || '').trim();
-  const rows = generateStationTrains(dyzurka)
-    .filter(t => !query || t.nrIn.includes(query) || t.nrOut.includes(query));
+  const stationMap = getStationMap();
+  const rows = DB.get('trains')
+    .filter(t => t.route?.some(r => r.stationId === dyzurka.id))
+    .map((t, index) => buildStoredTrainRow(t, dyzurka, stationMap, index))
+    .filter(t => !query || t.number.includes(query) || t.relation.toLowerCase().includes(query.toLowerCase()));
 
   document.getElementById('edr-trains-tbody').innerHTML = rows.map(t => `
     <tr class="${t.rowClass}">
       <td class="check-cell">✓</td>
-      <td class="check-cell">${t.nk ? '□' : ''}</td>
+      <td class="check-cell"></td>
       <td>${t.arrPlan}</td>
-      <td class="${t.arrDelay ? 'delay-cell' : ''}">${t.arrDelay || '0'}</td>
+      <td>${t.delay}</td>
       <td>${t.arrReal}</td>
-      <td>${t.kind}</td>
-      <td class="dir-in">${t.fromPost}</td>
-      <td class="nr-in ${t.hot ? 'number-hot' : ''}">${t.nrIn}</td>
-      <td class="nr-out ${t.hotOut ? 'number-hot' : ''}">${t.nrOut}</td>
-      <td class="dir-out">${t.toPost}</td>
-      <td class="line-cell">${t.line}</td>
-      <td>${t.pzam}</td>
-      <td class="${t.pobl > 0 ? 'delay-cell' : ''}">${t.pobl}</td>
-      <td>${t.type}</td>
+      <td>${t.category}</td>
+      <td class="nr-in number-hot" title="Masa: ${t.mass} t, długość: ${t.length} m">${t.number}</td>
+      <td>${t.driver}</td>
+      <td class="dir-in">${t.from}</td>
+      <td>${t.through}</td>
+      <td class="dir-out">${t.to}</td>
+      <td>${t.stop}</td>
       <td>${t.depPlan}</td>
-      <td class="${t.depDelay ? 'delay-cell' : ''}">${t.depDelay || '0'}</td>
+      <td>${t.delay}</td>
       <td>${t.depReal}</td>
-      <td>${t.start}</td>
-      <td>${t.end}</td>
-      <td>${t.carrier}</td>
+      <td title="${t.notes}">${t.relation}${t.dangerous ? ' ⚠ TN' : ''}</td>
     </tr>
-  `).join('') || '<tr><td colspan="20" class="empty-state">Brak pociągów dla podanego numeru.</td></tr>';
+  `).join('') || '<tr><td colspan="16" class="empty-state">Brak zgłoszonych składów dla tej dyżurki.</td></tr>';
 }
 
-function generateStationTrains(dyzurka) {
-  const stationProfiles = {
-    KAT: {
-      posts: ['Chorzów Batory', 'Zawodzie', 'Mysłowice', 'Ligota'],
-      starts: ['Katowice', 'Kraków Gł.', 'Gliwice', 'Bielsko-Biała Gł.', 'Warszawa Wsch.'],
-      ends: ['Gliwice', 'Kraków Gł.', 'Częstochowa', 'Wrocław Gł.', 'Rybnik'],
-      carriers: ['Koleje Śląskie', 'PKP Intercity', 'POLREGIO', 'PKP Cargo'],
-      lines: ['137', '139', '141', '656']
-    },
-    GL: {
-      posts: ['Zabrze', 'Katowice', 'Kędzierzyn-Koźle', 'Łabędy'],
-      starts: ['Gliwice', 'Katowice', 'Opole Gł.', 'Wrocław Gł.', 'Rybnik'],
-      ends: ['Katowice', 'Wrocław Gł.', 'Kędzierzyn-Koźle', 'Częstochowa', 'Kraków Gł.'],
-      carriers: ['Koleje Śląskie', 'PKP Intercity', 'POLREGIO', 'DB Cargo Polska'],
-      lines: ['135', '137', '141', '147']
-    },
-    CHB: {
-      posts: ['Katowice', 'Chorzów Miasto', 'Świętochłowice', 'Bytom'],
-      starts: ['Katowice', 'Bytom', 'Tarnowskie Góry', 'Gliwice', 'Lubliniec'],
-      ends: ['Gliwice', 'Katowice', 'Bytom', 'Tarnowskie Góry', 'Częstochowa'],
-      carriers: ['Koleje Śląskie', 'POLREGIO', 'PKP Cargo', 'CTL Logistics'],
-      lines: ['131', '137', '141', '651']
-    },
-    KTZ: {
-      posts: ['Katowice', 'Katowice Szopienice Płd.', 'Mysłowice', 'Sosnowiec Gł.'],
-      starts: ['Katowice', 'Mysłowice', 'Sosnowiec Gł.', 'Kraków Gł.', 'Oświęcim'],
-      ends: ['Sosnowiec Gł.', 'Katowice', 'Mysłowice', 'Kraków Gł.', 'Zawiercie'],
-      carriers: ['Koleje Śląskie', 'POLREGIO', 'PKP Cargo', 'Orlen Kolej'],
-      lines: ['134', '138', '139', '660']
-    },
-    SOG: {
-      posts: ['Katowice', 'Będzin', 'Dąbrowa Górnicza', 'Mysłowice'],
-      starts: ['Sosnowiec Gł.', 'Katowice', 'Zawiercie', 'Częstochowa', 'Kraków Gł.'],
-      ends: ['Katowice', 'Zawiercie', 'Dąbrowa Górnicza', 'Kielce', 'Gliwice'],
-      carriers: ['Koleje Śląskie', 'PKP Intercity', 'POLREGIO', 'PKP Cargo'],
-      lines: ['1', '62', '133', '160']
-    }
+function buildStoredTrainRow(train, dyzurka, stationMap, index) {
+  const routeIndex = train.route.findIndex(r => r.stationId === dyzurka.id);
+  const routePoint = train.route[routeIndex] || {};
+  const prev = stationMap.get(train.route[routeIndex - 1]?.stationId);
+  const next = stationMap.get(train.route[routeIndex + 1]?.stationId);
+  const first = stationMap.get(train.route[0]?.stationId);
+  const last = stationMap.get(train.route[train.route.length - 1]?.stationId);
+  const base = new Date(train.created_at || Date.now());
+  const arr = addMinutes(base, routeIndex * 9);
+  const dep = addMinutes(arr, routePoint.ph ? 5 : 1);
+  const isFirst = routeIndex === 0;
+  const isLast = routeIndex === train.route.length - 1;
+  const through = train.route
+    .slice(1, -1)
+    .map(r => stationMap.get(r.stationId)?.code || '?')
+    .join(' → ') || '—';
+
+  return {
+    rowClass: train.dangerous ? 'row-warning' : '',
+    arrPlan: isFirst ? '' : fmtTrainTime(arr),
+    arrReal: isFirst ? '' : fmtTrainTime(arr),
+    depPlan: isLast ? '' : fmtTrainTime(dep),
+    depReal: isLast ? '' : fmtTrainTime(dep),
+    delay: '0',
+    category: train.category,
+    number: train.number,
+    driver: train.driver_name || 'Maszynista',
+    from: prev ? `${prev.name} (${prev.code})` : '—',
+    through,
+    to: next ? `${next.name} (${next.code})` : '—',
+    stop: routePoint.ph ? 'ph' : '',
+    relation: `${first?.name || '?'} → ${last?.name || '?'}`,
+    mass: train.mass || 0,
+    length: train.length || 0,
+    dangerous: train.dangerous,
+    notes: [train.notes, train.dangerous ? `Towary niebezpieczne: ${train.dangerousDetails}` : ''].filter(Boolean).join(' | ')
   };
-
-  const profile = stationProfiles[dyzurka.code] || {
-    posts: ['Posterunek A', 'Posterunek B', 'Stacja sąsiednia', dyzurka.name],
-    starts: [dyzurka.name, 'Katowice', 'Gliwice', 'Kraków Gł.'],
-    ends: ['Katowice', 'Gliwice', 'Kraków Gł.', dyzurka.name],
-    carriers: ['Koleje Śląskie', 'POLREGIO', 'PKP Cargo'],
-    lines: [dyzurka.line || '000']
-  };
-
-  const kinds = ['APM', 'TMS', 'TCE', 'TLS', 'TKS', 'ROJ'];
-  const now = new Date();
-  const start = new Date(now);
-  start.setMinutes(now.getMinutes() - 64);
-  const seed = String(dyzurka.code || dyzurka.id).split('').reduce((sum, ch) => sum + ch.charCodeAt(0), 0);
-
-  return Array.from({ length: 22 }, (_, i) => {
-    const time = new Date(start.getTime() + i * 13 * 60000);
-    const dep = new Date(time.getTime() + ((i % 4) + 1) * 60000);
-    const delay = [0, 0, 0, 3, 7, 12, 0, 0, 21][(i + seed) % 9];
-    const passing = (i + seed) % 8 === 0;
-    const selected = i === 10;
-    const freight = (i + seed) % 5 === 0;
-    const nrBase = freight ? 240000 + seed * 13 + i * 17 : 41000 + seed * 7 + i * 19;
-    const fromPost = profile.posts[(i + seed) % profile.posts.length];
-    const toPost = profile.posts[(i + seed + 1) % profile.posts.length];
-
-    return {
-      nk: (i + seed) % 17 === 0,
-      arrPlan: passing ? '' : fmtTrainTime(time),
-      arrDelay: passing ? '' : delay,
-      arrReal: passing ? '' : fmtTrainTime(addMinutes(time, delay)),
-      kind: freight ? kinds[(i + 1) % kinds.length] : kinds[i % kinds.length],
-      fromPost: passing ? '-------' : fromPost,
-      nrIn: String(nrBase),
-      nrOut: passing ? '-----' : String(nrBase + ((i % 3) * 2)),
-      toPost,
-      line: profile.lines[(i + seed) % profile.lines.length],
-      pzam: passing ? '0,0' : ['0,0', '12,0', '21,0', '32,0'][(i + seed) % 4],
-      pobl: delay,
-      type: freight ? 'T' : '',
-      depPlan: fmtTrainTime(dep),
-      depDelay: delay,
-      depReal: fmtTrainTime(addMinutes(dep, delay)),
-      start: profile.starts[(i + seed + 2) % profile.starts.length],
-      end: profile.ends[(i + seed + 3) % profile.ends.length],
-      carrier: profile.carriers[(i + seed) % profile.carriers.length],
-      rowClass: selected ? 'row-selected' : (passing ? 'row-passing' : (delay >= 10 ? 'row-warning' : '')),
-      hot: (i + seed) % 6 === 0,
-      hotOut: (i + seed) % 7 === 0
-    };
-  });
 }
 
 function addMinutes(date, minutes) {
