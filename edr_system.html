@@ -1,0 +1,1649 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EDR — Elektroniczny Dziennik Ruchu</title>
+<style>
+  :root {
+    --bg: #0a0e1a;
+    --surface: #111827;
+    --surface2: #1a2235;
+    --border: #1f2d45;
+    --border2: #2a3d5a;
+    --text: #e2e8f4;
+    --text2: #8a9ab8;
+    --text3: #5a6b88;
+    --accent: #3b82f6;
+    --accent2: #1d4ed8;
+    --green: #10b981;
+    --green2: #065f46;
+    --red: #ef4444;
+    --red2: #7f1d1d;
+    --amber: #f59e0b;
+    --amber2: #78350f;
+    --radius: 8px;
+    --radius2: 12px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Courier New', Courier, monospace;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    font-size: 14px;
+  }
+
+  /* ─── SCANLINE / NOISE OVERLAY ─── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0,0,0,0.03) 2px,
+      rgba(0,0,0,0.03) 4px
+    );
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  /* ─── NAVBAR ─── */
+  #navbar {
+    display: none;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0 24px;
+    height: 56px;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  #navbar.visible { display: flex; }
+  .nav-brand {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    color: var(--accent);
+    text-transform: uppercase;
+  }
+  .nav-brand span { color: var(--text2); font-weight: 400; }
+  .nav-right { display: flex; align-items: center; gap: 16px; }
+  .nav-user { font-size: 12px; color: var(--text2); }
+  .nav-role {
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 20px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .role-admin { background: rgba(59,130,246,0.15); color: var(--accent); border: 1px solid rgba(59,130,246,0.3); }
+  .role-dyzurny { background: rgba(16,185,129,0.15); color: var(--green); border: 1px solid rgba(16,185,129,0.3); }
+  .btn-logout {
+    background: transparent;
+    border: 1px solid var(--border2);
+    color: var(--text2);
+    padding: 5px 14px;
+    border-radius: var(--radius);
+    cursor: pointer;
+    font-size: 12px;
+    font-family: inherit;
+    transition: all 0.2s;
+  }
+  .btn-logout:hover { border-color: var(--red); color: var(--red); }
+
+  /* ─── PAGES ─── */
+  .page { display: none; min-height: calc(100vh - 56px); }
+  .page.active { display: block; }
+
+  /* ─── LOGIN PAGE ─── */
+  #page-login {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 32px;
+    background: radial-gradient(ellipse at center, #0d1627 0%, #0a0e1a 70%);
+  }
+  .login-logo {
+    text-align: center;
+  }
+  .login-logo .big-text {
+    font-size: 48px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    color: var(--accent);
+    text-shadow: 0 0 40px rgba(59,130,246,0.4);
+  }
+  .login-logo .sub-text {
+    font-size: 11px;
+    letter-spacing: 0.3em;
+    color: var(--text3);
+    margin-top: 4px;
+    text-transform: uppercase;
+  }
+  .login-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius2);
+    padding: 32px;
+    width: 360px;
+  }
+  .login-title {
+    font-size: 13px;
+    letter-spacing: 0.15em;
+    color: var(--text2);
+    text-transform: uppercase;
+    margin-bottom: 24px;
+    text-align: center;
+  }
+  .form-group { margin-bottom: 16px; }
+  .form-label {
+    display: block;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    color: var(--text3);
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .form-input {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 10px 14px;
+    color: var(--text);
+    font-family: inherit;
+    font-size: 14px;
+    transition: border-color 0.2s;
+  }
+  .form-input:focus { outline: none; border-color: var(--accent); }
+  .btn-primary {
+    width: 100%;
+    background: var(--accent);
+    border: none;
+    border-radius: var(--radius);
+    padding: 11px;
+    color: #fff;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: 8px;
+  }
+  .btn-primary:hover { background: var(--accent2); }
+  .btn-discord {
+    background: #5865f2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+  }
+  .btn-discord:hover { background: #4752c4; }
+  .discord-note {
+    color: var(--text3);
+    font-size: 12px;
+    line-height: 1.6;
+    text-align: center;
+    margin-top: 18px;
+  }
+  .login-toggle {
+    text-align: center;
+    margin-top: 16px;
+    font-size: 12px;
+    color: var(--text3);
+  }
+  .login-toggle a { color: var(--accent); cursor: pointer; text-decoration: none; }
+  .login-toggle a:hover { text-decoration: underline; }
+  .alert {
+    padding: 10px 14px;
+    border-radius: var(--radius);
+    font-size: 12px;
+    margin-bottom: 14px;
+    display: none;
+  }
+  .alert.error { background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.3); color: #fca5a5; }
+  .alert.success { background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.3); color: #6ee7b7; }
+  .alert.visible { display: block; }
+
+  /* ─── GENERAL LAYOUT ─── */
+  .page-inner { max-width: 1100px; margin: 0 auto; padding: 32px 24px; }
+  .page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 28px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border);
+  }
+  .page-title {
+    font-size: 13px;
+    letter-spacing: 0.2em;
+    color: var(--text2);
+    text-transform: uppercase;
+  }
+  .page-title span { color: var(--text); font-size: 16px; display: block; margin-top: 2px; letter-spacing: 0.05em; }
+
+  /* ─── CARDS ─── */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius2);
+    padding: 20px;
+    margin-bottom: 20px;
+  }
+  .card-title {
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    color: var(--text3);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  /* ─── TABS ─── */
+  .tabs { display: flex; gap: 4px; margin-bottom: 24px; }
+  .tab {
+    padding: 8px 18px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    font-family: inherit;
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    color: var(--text2);
+    background: transparent;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-transform: uppercase;
+  }
+  .tab:hover { border-color: var(--border2); color: var(--text); }
+  .tab.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+  /* ─── TABLE ─── */
+  .data-table { width: 100%; border-collapse: collapse; }
+  .data-table th {
+    text-align: left;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    color: var(--text3);
+    text-transform: uppercase;
+    padding: 0 12px 10px;
+    border-bottom: 1px solid var(--border);
+  }
+  .data-table td {
+    padding: 12px;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+    color: var(--text2);
+  }
+  .data-table tr:last-child td { border-bottom: none; }
+  .data-table tr:hover td { background: rgba(255,255,255,0.02); }
+
+  /* ─── BADGES ─── */
+  .badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 20px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .badge-green { background: rgba(16,185,129,0.15); color: var(--green); border: 1px solid rgba(16,185,129,0.3); }
+  .badge-red { background: rgba(239,68,68,0.15); color: var(--red); border: 1px solid rgba(239,68,68,0.3); }
+  .badge-blue { background: rgba(59,130,246,0.15); color: var(--accent); border: 1px solid rgba(59,130,246,0.3); }
+  .badge-amber { background: rgba(245,158,11,0.15); color: var(--amber); border: 1px solid rgba(245,158,11,0.3); }
+  .badge-gray { background: rgba(90,107,136,0.15); color: var(--text3); border: 1px solid rgba(90,107,136,0.3); }
+
+  /* ─── BUTTONS ─── */
+  .btn {
+    padding: 6px 14px;
+    border-radius: var(--radius);
+    border: 1px solid var(--border2);
+    background: transparent;
+    color: var(--text2);
+    font-family: inherit;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn:hover { border-color: var(--accent); color: var(--accent); }
+  .btn-danger:hover { border-color: var(--red); color: var(--red); }
+  .btn-success:hover { border-color: var(--green); color: var(--green); }
+  .btn-sm { padding: 4px 10px; font-size: 11px; }
+
+  /* ─── FORM INLINE ─── */
+  .form-row { display: flex; gap: 10px; align-items: flex-end; margin-bottom: 20px; }
+  .form-row .form-group { margin-bottom: 0; flex: 1; }
+  .form-select {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 9px 14px;
+    color: var(--text);
+    font-family: inherit;
+    font-size: 13px;
+  }
+  .form-select:focus { outline: none; border-color: var(--accent); }
+
+  /* ─── GRID DE DYŻURKI ─── */
+  .dyzurka-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+  }
+  .dyzurka-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius2);
+    padding: 20px;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+  .dyzurka-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--accent);
+    transform: scaleX(0);
+    transition: transform 0.2s;
+  }
+  .dyzurka-card:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.3); }
+  .dyzurka-card:hover::before { transform: scaleX(1); }
+  .dyzurka-card-code {
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .dyzurka-card-name {
+    font-size: 15px;
+    color: var(--text);
+    margin-bottom: 10px;
+    font-weight: 600;
+  }
+  .dyzurka-card-meta { display: flex; gap: 8px; flex-wrap: wrap; }
+  .dyzurka-card-line {
+    font-size: 11px;
+    color: var(--text3);
+    margin-top: 8px;
+  }
+
+  /* ─── EDR DYZURKA VIEW ─── */
+  .edr-header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .edr-station {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .edr-station-code {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--accent);
+    letter-spacing: 0.1em;
+    font-family: 'Courier New', monospace;
+  }
+  .edr-station-info {}
+  .edr-station-name { font-size: 14px; color: var(--text); font-weight: 600; }
+  .edr-station-meta { font-size: 11px; color: var(--text3); margin-top: 2px; }
+  .edr-clock {
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--green);
+    letter-spacing: 0.15em;
+    font-family: 'Courier New', monospace;
+    text-shadow: 0 0 20px rgba(16,185,129,0.3);
+  }
+  .edr-date { font-size: 11px; color: var(--text3); text-align: right; letter-spacing: 0.1em; margin-top: 4px; }
+  .edr-body { padding: 24px; }
+  .edr-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+
+  /* ─── DZIENNIK TABLE ─── */
+  .dziennik-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+    font-family: 'Courier New', monospace;
+  }
+  .dziennik-table th {
+    background: var(--surface2);
+    padding: 8px 10px;
+    text-align: center;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    color: var(--text3);
+    text-transform: uppercase;
+    border: 1px solid var(--border);
+  }
+  .dziennik-table td {
+    padding: 8px 10px;
+    border: 1px solid var(--border);
+    color: var(--text2);
+    text-align: center;
+    vertical-align: middle;
+  }
+  .dziennik-table tr:nth-child(even) td { background: rgba(255,255,255,0.015); }
+  .dziennik-table .td-pociag { color: var(--accent); font-weight: 700; }
+  .dziennik-table .td-time { color: var(--green); }
+  .dziennik-table .td-status-ok { color: var(--green); }
+  .dziennik-table .td-status-delay { color: var(--amber); }
+
+  /* ─── STATUS PANEL ─── */
+  .status-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+  .status-item {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .status-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .status-dot.green { background: var(--green); box-shadow: 0 0 6px var(--green); }
+  .status-dot.red { background: var(--red); box-shadow: 0 0 6px var(--red); }
+  .status-dot.amber { background: var(--amber); box-shadow: 0 0 6px var(--amber); }
+  .status-label { font-size: 11px; color: var(--text3); letter-spacing: 0.1em; text-transform: uppercase; }
+  .status-value { font-size: 13px; color: var(--text); margin-top: 2px; }
+
+  /* ─── MODAL ─── */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    z-index: 1000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+  }
+  .modal-overlay.visible { display: flex; }
+  .modal {
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    border-radius: var(--radius2);
+    padding: 28px;
+    width: 480px;
+    max-width: 95vw;
+    max-height: 80vh;
+    overflow-y: auto;
+  }
+  .modal-title {
+    font-size: 12px;
+    letter-spacing: 0.15em;
+    color: var(--text3);
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+  .modal-actions { display: flex; gap: 10px; margin-top: 20px; justify-content: flex-end; }
+
+  /* ─── UPRAWNIENIA MATRIX ─── */
+  .perm-list { display: flex; flex-direction: column; gap: 8px; max-height: 300px; overflow-y: auto; padding: 4px; }
+  .perm-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 12px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .perm-item:hover { border-color: var(--border2); }
+  .perm-item.selected { border-color: var(--accent); background: rgba(59,130,246,0.08); }
+  .perm-checkbox {
+    width: 16px;
+    height: 16px;
+    border: 1px solid var(--border2);
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.15s;
+  }
+  .perm-item.selected .perm-checkbox { background: var(--accent); border-color: var(--accent); }
+  .perm-checkbox::after { content: '✓'; color: #fff; font-size: 10px; display: none; }
+  .perm-item.selected .perm-checkbox::after { display: block; }
+
+  /* ─── TOAST ─── */
+  #toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    border-radius: var(--radius);
+    padding: 12px 20px;
+    font-size: 12px;
+    color: var(--text);
+    z-index: 9998;
+    transform: translateY(80px);
+    opacity: 0;
+    transition: all 0.3s ease;
+    max-width: 320px;
+  }
+  #toast.visible { transform: translateY(0); opacity: 1; }
+  #toast.toast-success { border-left: 3px solid var(--green); }
+  #toast.toast-error { border-left: 3px solid var(--red); }
+
+  /* ─── 403 PAGE ─── */
+  #page-forbidden {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 16px;
+    text-align: center;
+    padding: 60px 24px;
+  }
+  .forbidden-code { font-size: 80px; font-weight: 700; color: var(--red); opacity: 0.3; letter-spacing: 0.1em; }
+  .forbidden-title { font-size: 16px; color: var(--text); letter-spacing: 0.1em; }
+  .forbidden-desc { font-size: 13px; color: var(--text3); max-width: 400px; line-height: 1.6; }
+
+  /* ─── MISC ─── */
+  .separator { border: none; border-top: 1px solid var(--border); margin: 20px 0; }
+  .empty-state { text-align: center; padding: 40px; color: var(--text3); font-size: 13px; }
+  .text-accent { color: var(--accent); }
+  .text-green { color: var(--green); }
+  .text-red { color: var(--red); }
+  .mt-16 { margin-top: 16px; }
+  .flex { display: flex; }
+  .gap-8 { gap: 8px; }
+  .items-center { align-items: center; }
+  .justify-between { justify-content: space-between; }
+
+  .blink { animation: blink 1s step-start infinite; }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  /* scrollbar */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav id="navbar">
+  <div class="nav-brand">EDR <span>/ System Zarządzania Ruchem</span></div>
+  <div class="nav-right">
+    <span class="nav-user" id="nav-username">—</span>
+    <span class="nav-role" id="nav-role-badge">—</span>
+    <button class="btn-logout" onclick="logout()">Wyloguj</button>
+  </div>
+</nav>
+
+<!-- TOAST -->
+<div id="toast"></div>
+
+<!-- ════════════════════════════════════════════════
+     PAGE: DISCORD LOGIN
+════════════════════════════════════════════════ -->
+<div id="page-login" class="page active">
+  <div class="login-logo">
+    <div class="big-text">EDR</div>
+    <div class="sub-text">Elektroniczny Dziennik Ruchu · System Zarządzania Posterunkami</div>
+  </div>
+  <div class="login-card">
+    <div id="discord-login-wrapper">
+      <div class="login-title">Logowanie przez Discord</div>
+      <div class="alert error" id="login-error"></div>
+      <button class="btn-primary btn-discord" onclick="doDiscordLogin()">
+        <span>Discord</span>
+        <span>Zaloguj się</span>
+      </button>
+      <div class="discord-note">
+        Dostęp do EDR jest oparty o konto Discord. Użytkownik o ID
+        <strong>493468210570461195</strong> otrzyma automatycznie rolę Administratora.
+      </div>
+    </div>
+  </div>
+  <div style="font-size:11px;color:var(--text3);letter-spacing:0.1em;text-align:center">
+    Skonfiguruj DISCORD_CLIENT_ID w pliku, aby uruchomić logowanie OAuth2
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════
+     PAGE: ADMIN DASHBOARD
+════════════════════════════════════════════════ -->
+<div id="page-admin" class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-title">Panel Administracyjny<span id="admin-greeting">—</span></div>
+    </div>
+
+    <!-- TABS -->
+    <div class="tabs">
+      <button class="tab active" onclick="adminTab('users')" id="tab-users">Użytkownicy</button>
+      <button class="tab" onclick="adminTab('dyzurki')" id="tab-dyzurki">Dyżurki / Posterunki</button>
+      <button class="tab" onclick="adminTab('uprawnienia')" id="tab-uprawnienia">Matryca Uprawnień</button>
+    </div>
+
+    <!-- TAB: USERS -->
+    <div id="admin-tab-users">
+      <div class="card">
+        <div class="card-title">Lista użytkowników systemu</div>
+        <table class="data-table" id="admin-users-table">
+          <thead>
+            <tr>
+              <th>ID</th><th>Login</th><th>Discord ID</th><th>Imię i nazwisko</th>
+              <th>Rola</th><th>Status</th><th>Ostatnie logowanie</th><th>Akcje</th>
+            </tr>
+          </thead>
+          <tbody id="admin-users-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- TAB: DYZURKI -->
+    <div id="admin-tab-dyzurki" style="display:none">
+      <div class="card">
+        <div class="card-title">Dodaj nowy posterunek / dyżurkę</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Nazwa stacji / posterunku</label>
+            <input class="form-input" id="new-dyz-name" placeholder="np. Stacja Katowice Główna">
+          </div>
+          <div class="form-group" style="max-width:120px">
+            <label class="form-label">Kod (skrót)</label>
+            <input class="form-input" id="new-dyz-code" placeholder="KAT" maxlength="6">
+          </div>
+          <div class="form-group" style="max-width:120px">
+            <label class="form-label">Linia nr</label>
+            <input class="form-input" id="new-dyz-line" placeholder="141" type="number">
+          </div>
+          <div class="form-group" style="max-width:120px">
+            <label class="form-label">km</label>
+            <input class="form-input" id="new-dyz-km" placeholder="0.000">
+          </div>
+          <div class="form-group" style="max-width:160px">
+            <label class="form-label">Typ</label>
+            <select class="form-select" id="new-dyz-type">
+              <option value="stacja">Stacja</option>
+              <option value="posterunek">Posterunek odgałęźny</option>
+              <option value="podg">Podg.</option>
+              <option value="sr">Srk.</option>
+            </select>
+          </div>
+          <div class="form-group" style="max-width:120px; flex:none">
+            <label class="form-label">&nbsp;</label>
+            <button class="btn-primary" style="margin-top:0;width:auto;padding:9px 20px" onclick="addDyzurka()">+ Dodaj</button>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Zarejestrowane posterunki</div>
+        <table class="data-table" id="admin-dyz-table">
+          <thead>
+            <tr><th>Kod</th><th>Nazwa</th><th>Typ</th><th>Linia</th><th>km</th><th>Status</th><th>Akcje</th></tr>
+          </thead>
+          <tbody id="admin-dyz-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- TAB: UPRAWNIENIA -->
+    <div id="admin-tab-uprawnienia" style="display:none">
+      <div class="card">
+        <div class="card-title">Matryca uprawnień — przypisz dyżurki do użytkownika</div>
+        <div class="form-row" style="margin-bottom:0">
+          <div class="form-group">
+            <label class="form-label">Wybierz użytkownika</label>
+            <select class="form-select" id="perm-user-select" onchange="loadUserPerms()">
+              <option value="">— wybierz —</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div id="perm-matrix-container" style="display:none">
+        <div class="card">
+          <div class="card-title" id="perm-matrix-title">Przypisane dyżurki</div>
+          <div class="perm-list" id="perm-dyzurki-list"></div>
+          <div style="margin-top:16px;display:flex;gap:10px">
+            <button class="btn-primary" style="width:auto;padding:9px 24px" onclick="savePerms()">Zapisz uprawnienia</button>
+            <button class="btn" onclick="selectAllPerms()">Zaznacz wszystkie</button>
+            <button class="btn" onclick="clearAllPerms()">Odznacz wszystkie</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════
+     PAGE: DYZURNY DASHBOARD
+════════════════════════════════════════════════ -->
+<div id="page-dashboard" class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-title">Pulpit Dyżurnego<span id="dashboard-greeting">—</span></div>
+      <div style="font-size:11px;color:var(--text3);text-align:right">
+        Dostęp do <span id="dashboard-count" class="text-accent">—</span> posterunków
+      </div>
+    </div>
+    <div id="dashboard-dyzurki-grid" class="dyzurka-grid">
+      <div class="empty-state">Ładowanie...</div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════
+     PAGE: EDR — WNĘTRZE DYŻURKI
+════════════════════════════════════════════════ -->
+<div id="page-edr" class="page">
+  <div class="edr-header">
+    <div class="edr-station">
+      <div class="edr-station-code" id="edr-code">—</div>
+      <div class="edr-station-info">
+        <div class="edr-station-name" id="edr-name">—</div>
+        <div class="edr-station-meta" id="edr-meta">—</div>
+      </div>
+    </div>
+    <div>
+      <div class="edr-clock" id="edr-clock">00:00:00 <span class="blink">_</span></div>
+      <div class="edr-date" id="edr-date">—</div>
+    </div>
+    <div style="display:flex;gap:10px;align-items:center">
+      <button class="btn" onclick="addDziennikEntry()">+ Wpis do dziennika</button>
+      <button class="btn" onclick="goBack()">← Wróć</button>
+    </div>
+  </div>
+
+  <div class="edr-body">
+    <div class="edr-grid">
+      <!-- LEWA KOLUMNA -->
+      <div>
+        <div class="card">
+          <div class="card-title">Stan urządzeń posterunku</div>
+          <div class="status-grid" id="edr-status-grid">
+            <!-- dynamicznie generowane -->
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">Pociągi w obszarze — stan bieżący</div>
+          <table class="dziennik-table" id="edr-trains-table">
+            <thead>
+              <tr>
+                <th>Nr poc.</th><th>Relacja</th><th>Przyjazd</th><th>Odjazd</th><th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="edr-trains-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+      <!-- PRAWA KOLUMNA -->
+      <div>
+        <div class="card">
+          <div class="card-title">Dziennik ruchu — wpisy</div>
+          <div id="edr-dziennik-list" style="max-height:520px;overflow-y:auto">
+            <div class="empty-state">Brak wpisów</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════
+     PAGE: 403 FORBIDDEN
+════════════════════════════════════════════════ -->
+<div id="page-forbidden" class="page">
+  <div class="forbidden-code">403</div>
+  <div class="forbidden-title">DOSTĘP ZABRONIONY</div>
+  <div class="forbidden-desc">
+    Nie posiadasz uprawnień do tego posterunku ruchu.
+    Skontaktuj się z administratorem systemu w celu uzyskania dostępu.
+  </div>
+  <button class="btn" style="margin-top:16px" onclick="goBack()">← Wróć do pulpitu</button>
+</div>
+
+<!-- ════════════════════════════════════════════════
+     MODAL: DODAJ WPIS DO DZIENNIKA
+════════════════════════════════════════════════ -->
+<div class="modal-overlay" id="modal-dziennik">
+  <div class="modal">
+    <div class="modal-title">Nowy wpis do dziennika ruchu</div>
+    <div class="form-group">
+      <label class="form-label">Typ wpisu</label>
+      <select class="form-select" id="modal-entry-type">
+        <option value="info">Informacja ogólna</option>
+        <option value="pociag">Ruch pociągów</option>
+        <option value="usterka">Usterka / awaria</option>
+        <option value="rozkaz">Rozkaz szczególny</option>
+        <option value="zmiana">Zmiana dyżuru</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Treść wpisu</label>
+      <textarea class="form-input" id="modal-entry-text" rows="4" placeholder="Wpisz treść..." style="resize:vertical"></textarea>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Numer pociągu (opcjonalnie)</label>
+      <input class="form-input" id="modal-entry-train" placeholder="np. IC 1234">
+    </div>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeModal('modal-dziennik')">Anuluj</button>
+      <button class="btn-primary" style="width:auto;padding:9px 24px" onclick="saveDziennikEntry()">Zapisz wpis</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════
+     MODAL: EDYTUJ UŻYTKOWNIKA
+════════════════════════════════════════════════ -->
+<div class="modal-overlay" id="modal-user-edit">
+  <div class="modal">
+    <div class="modal-title">Edycja użytkownika</div>
+    <input type="hidden" id="edit-user-id">
+    <div class="form-group">
+      <label class="form-label">Rola</label>
+      <select class="form-select" id="edit-user-role">
+        <option value="dyzurny">Dyżurny Ruchu</option>
+        <option value="admin">Administrator</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Status konta</label>
+      <select class="form-select" id="edit-user-active">
+        <option value="1">Aktywne</option>
+        <option value="0">Dezaktywowane</option>
+      </select>
+    </div>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeModal('modal-user-edit')">Anuluj</button>
+      <button class="btn-primary" style="width:auto;padding:9px 24px" onclick="saveUserEdit()">Zapisz</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════════════════════════
+   BAZA DANYCH — symulacja przez localStorage
+   Tabele: users, dyzurki, user_dyzurki, dziennik
+═══════════════════════════════════════════════════════════════ */
+
+const DB = {
+  get(table) {
+    try { return JSON.parse(localStorage.getItem('edr_' + table) || '[]'); }
+    catch { return []; }
+  },
+  set(table, data) {
+    localStorage.setItem('edr_' + table, JSON.stringify(data));
+  },
+  nextId(table) {
+    const rows = this.get(table);
+    return rows.length ? Math.max(...rows.map(r => r.id)) + 1 : 1;
+  }
+};
+
+/* ═══════════════════════════════════════════════════════════════
+   HASZOWANIE HASEŁ — SHA-256 przez Web Crypto API
+═══════════════════════════════════════════════════════════════ */
+async function hashPassword(pass) {
+  const buf = new TextEncoder().encode(pass + '_edr_salt_2024');
+  const hash = await crypto.subtle.digest('SHA-256', buf);
+  return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2,'0')).join('');
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   JWT SIMULATION (base64 encode/decode — demo only)
+   W produkcji: używaj prawdziwego JWT (jsonwebtoken / jose)
+═══════════════════════════════════════════════════════════════ */
+const JWT_SECRET = 'edr_jwt_secret_change_in_production';
+
+function generateToken(user) {
+  const payload = {
+    sub: user.id,
+    login: user.login,
+    role: user.role,
+    iat: Date.now(),
+    exp: Date.now() + 8 * 3600 * 1000 // 8 godzin
+  };
+  const encoded = btoa(JSON.stringify(payload));
+  const sig = btoa(JWT_SECRET + encoded).slice(0,16);
+  return encoded + '.' + sig;
+}
+
+function verifyToken(token) {
+  if (!token) return null;
+  try {
+    const [encoded] = token.split('.');
+    const payload = JSON.parse(atob(encoded));
+    if (payload.exp < Date.now()) return null;
+    return payload;
+  } catch { return null; }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   STAN SESJI
+═══════════════════════════════════════════════════════════════ */
+let currentUser = null;
+let currentDyzurka = null;
+let clockInterval = null;
+
+const DISCORD_CLIENT_ID = '1487149572236116118';
+const DISCORD_ADMIN_ID = '493468210570461195';
+const DISCORD_SCOPES = 'identify';
+const DISCORD_REDIRECT_URI = window.location.origin + window.location.pathname;
+
+function getSession() {
+  const token = localStorage.getItem('edr_token');
+  const payload = verifyToken(token);
+  if (!payload) return null;
+  const users = DB.get('users');
+  const user = users.find(u => u.id === payload.sub);
+  if (!user || !user.is_active) return null;
+  return user;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   INICJALIZACJA — SEED DANYCH DEMO
+═══════════════════════════════════════════════════════════════ */
+async function initDB() {
+  if (DB.get('dyzurki').length === 0) {
+    DB.set('dyzurki', [
+      { id:1, name:'Katowice Główna', code:'KAT', line:'141', km:'0.000', type:'stacja', is_active:true, created_at: new Date().toISOString() },
+      { id:2, name:'Gliwice', code:'GL', line:'141', km:'24.800', type:'stacja', is_active:true, created_at: new Date().toISOString() },
+      { id:3, name:'Chorzów Batory', code:'CHB', line:'141', km:'9.600', type:'stacja', is_active:true, created_at: new Date().toISOString() },
+      { id:4, name:'Posterunek Odg. Zawodzie', code:'KTZ', line:'139', km:'3.200', type:'posterunek', is_active:true, created_at: new Date().toISOString() },
+      { id:5, name:'Sosnowiec Główny', code:'SOG', line:'160', km:'17.400', type:'stacja', is_active:true, created_at: new Date().toISOString() },
+    ]);
+
+    showToast('Zainicjalizowano bazę posterunków demo', 'success');
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   ROUTING — nawigacja między stronami
+═══════════════════════════════════════════════════════════════ */
+function showPage(pageId) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  const page = document.getElementById('page-' + pageId);
+  if (page) page.classList.add('active');
+
+  const navbar = document.getElementById('navbar');
+  if (pageId === 'login') {
+    navbar.classList.remove('visible');
+  } else {
+    navbar.classList.add('visible');
+  }
+}
+
+function navigate(path, params = {}) {
+  // ── MIDDLEWARE AUTORYZACJI ──
+  const user = getSession();
+
+  if (path === '/login') { showPage('login'); return; }
+
+  if (!user) { showPage('login'); return; }
+
+  // Aktualizuj navbar
+  document.getElementById('nav-username').textContent = user.fullname || user.login;
+  const roleBadge = document.getElementById('nav-role-badge');
+  roleBadge.textContent = user.role === 'admin' ? 'Administrator' : 'Dyżurny Ruchu';
+  roleBadge.className = 'nav-role ' + (user.role === 'admin' ? 'role-admin' : 'role-dyzurny');
+
+  // ── ROUTING ──
+  if (path === '/admin') {
+    // Wymaga roli admin
+    if (user.role !== 'admin') { showPage('forbidden'); return; }
+    currentUser = user;
+    showPage('admin');
+    renderAdminGreeting();
+    renderAdminUsers();
+    return;
+  }
+
+  if (path === '/dashboard') {
+    currentUser = user;
+    if (user.role === 'admin') {
+      navigate('/admin');
+      return;
+    }
+    showPage('dashboard');
+    renderDashboard();
+    return;
+  }
+
+  if (path === '/dyzurka') {
+    // ── MIDDLEWARE SPRAWDZENIA UPRAWNIEŃ DO DYŻURKI ──
+    // requireDyzurkaAccess(user.id, params.id) — oto implementacja:
+    const dyzurkaId = parseInt(params.id);
+
+    if (user.role !== 'admin') {
+      // Sprawdź tabelę user_dyzurki (relacja wiele-do-wielu)
+      const userDyzurki = DB.get('user_dyzurki');
+      const hasAccess = userDyzurki.some(
+        ud => ud.user_id === user.id && ud.dyzurka_id === dyzurkaId
+      );
+
+      if (!hasAccess) {
+        // 403 Forbidden — brak dostępu
+        showPage('forbidden');
+        showToast('403 — Brak dostępu do tego posterunku', 'error');
+        return;
+      }
+    }
+
+    // Pobierz dane dyżurki
+    const dyzurki = DB.get('dyzurki');
+    const dyzurka = dyzurki.find(d => d.id === dyzurkaId);
+    if (!dyzurka) { showToast('Dyżurka nie istnieje', 'error'); return; }
+    if (!dyzurka.is_active) { showToast('Dyżurka jest nieaktywna', 'error'); return; }
+
+    currentDyzurka = dyzurka;
+    currentUser = user;
+    showPage('edr');
+    renderEDR(dyzurka);
+    return;
+  }
+
+  // Domyślnie
+  if (user.role === 'admin') navigate('/admin');
+  else navigate('/dashboard');
+}
+
+function goBack() {
+  if (currentUser && currentUser.role === 'admin') navigate('/admin');
+  else navigate('/dashboard');
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   AUTH — DISCORD OAUTH / WYLOGOWANIE
+═══════════════════════════════════════════════════════════════ */
+function doDiscordLogin() {
+  const errEl = document.getElementById('login-error');
+
+  if (!DISCORD_CLIENT_ID || DISCORD_CLIENT_ID === 'WSTAW_CLIENT_ID_APLIKACJI_DISCORD') {
+    showAlert(errEl, 'Ustaw DISCORD_CLIENT_ID w pliku edr_system.html.');
+    return;
+  }
+
+  const state = crypto.randomUUID ? crypto.randomUUID() : String(Date.now());
+  localStorage.setItem('edr_discord_state', state);
+
+  const params = new URLSearchParams({
+    client_id: DISCORD_CLIENT_ID,
+    redirect_uri: DISCORD_REDIRECT_URI,
+    response_type: 'token',
+    scope: DISCORD_SCOPES,
+    state
+  });
+
+  window.location.href = 'https://discord.com/oauth2/authorize?' + params.toString();
+}
+
+async function handleDiscordCallback() {
+  if (!window.location.hash.includes('access_token')) return false;
+
+  const errEl = document.getElementById('login-error');
+  const hashParams = new URLSearchParams(window.location.hash.slice(1));
+  const returnedState = hashParams.get('state');
+  const storedState = localStorage.getItem('edr_discord_state');
+  localStorage.removeItem('edr_discord_state');
+
+  if (!storedState || returnedState !== storedState) {
+    window.history.replaceState(null, document.title, DISCORD_REDIRECT_URI);
+    showAlert(errEl, 'Nie udało się potwierdzić logowania Discord.');
+    return true;
+  }
+
+  window.history.replaceState(null, document.title, DISCORD_REDIRECT_URI);
+
+  try {
+    const response = await fetch('https://discord.com/api/users/@me', {
+      headers: { Authorization: `Bearer ${hashParams.get('access_token')}` }
+    });
+
+    if (!response.ok) throw new Error('Discord profile request failed');
+
+    const profile = await response.json();
+    const user = upsertDiscordUser(profile);
+    if (!user.is_active) {
+      showAlert(errEl, 'Konto zostało dezaktywowane. Skontaktuj się z administratorem.');
+      return true;
+    }
+
+    localStorage.setItem('edr_token', generateToken(user));
+    showToast(`Zalogowano przez Discord jako ${user.fullname || user.login}`, 'success');
+
+    if (user.role === 'admin') navigate('/admin');
+    else navigate('/dashboard');
+  } catch (error) {
+    showAlert(errEl, 'Nie udało się pobrać profilu Discord. Spróbuj ponownie.');
+  }
+
+  return true;
+}
+
+function upsertDiscordUser(profile) {
+  const users = DB.get('users');
+  let user = users.find(u => u.discord_id === profile.id);
+  const isDiscordAdmin = profile.id === DISCORD_ADMIN_ID;
+  const now = new Date().toISOString();
+  const displayName = profile.global_name || profile.username;
+
+  if (!user) {
+    user = {
+      id: DB.nextId('users'),
+      login: `discord:${profile.username}`,
+      fullname: displayName,
+      discord_id: profile.id,
+      discord_username: profile.username,
+      discord_avatar: profile.avatar,
+      role: isDiscordAdmin ? 'admin' : 'dyzurny',
+      is_active: true,
+      created_at: now,
+      last_login: now
+    };
+    users.push(user);
+  } else {
+    user.login = `discord:${profile.username}`;
+    user.fullname = displayName;
+    user.discord_username = profile.username;
+    user.discord_avatar = profile.avatar;
+    user.last_login = now;
+    if (isDiscordAdmin) {
+      user.role = 'admin';
+      user.is_active = true;
+    }
+  }
+
+  DB.set('users', users);
+  return user;
+}
+
+function logout() {
+  localStorage.removeItem('edr_token');
+  currentUser = null;
+  currentDyzurka = null;
+  if (clockInterval) { clearInterval(clockInterval); clockInterval = null; }
+  showToast('Wylogowano z systemu', 'success');
+  showPage('login');
+  document.getElementById('navbar').classList.remove('visible');
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   ADMIN — USERS
+═══════════════════════════════════════════════════════════════ */
+function renderAdminGreeting() {
+  const user = getSession();
+  document.getElementById('admin-greeting').textContent = user ? user.fullname || user.login : '—';
+}
+
+function renderAdminUsers() {
+  const users = DB.get('users');
+  const tbody = document.getElementById('admin-users-tbody');
+  if (!users.length) { tbody.innerHTML = '<tr><td colspan="8" class="empty-state">Brak użytkowników</td></tr>'; return; }
+
+  tbody.innerHTML = users.map(u => `
+    <tr>
+      <td style="color:var(--text3)">${u.id}</td>
+      <td><span style="color:var(--text)">${u.login}</span></td>
+      <td style="color:var(--text3);font-size:12px">${u.discord_id || '—'}</td>
+      <td>${u.fullname || '—'}</td>
+      <td>
+        ${u.role === 'admin'
+          ? '<span class="badge badge-blue">Administrator</span>'
+          : '<span class="badge badge-green">Dyżurny Ruchu</span>'}
+      </td>
+      <td>
+        ${u.is_active
+          ? '<span class="badge badge-green">Aktywne</span>'
+          : '<span class="badge badge-red">Dezaktywowane</span>'}
+      </td>
+      <td style="color:var(--text3);font-size:12px">${u.last_login ? fmtDate(u.last_login) : 'nigdy'}</td>
+      <td>
+        <button class="btn btn-sm" onclick="openUserEdit(${u.id})">Edytuj</button>
+      </td>
+    </tr>
+  `).join('');
+}
+
+function openUserEdit(userId) {
+  const users = DB.get('users');
+  const u = users.find(u => u.id === userId);
+  if (!u) return;
+  document.getElementById('edit-user-id').value = userId;
+  document.getElementById('edit-user-role').value = u.role;
+  document.getElementById('edit-user-active').value = u.is_active ? '1' : '0';
+  openModal('modal-user-edit');
+}
+
+function saveUserEdit() {
+  const userId = parseInt(document.getElementById('edit-user-id').value);
+  const role = document.getElementById('edit-user-role').value;
+  const isActive = document.getElementById('edit-user-active').value === '1';
+  const session = getSession();
+
+  const users = DB.get('users');
+  const u = users.find(u => u.id === userId);
+  if (!u) return;
+
+  // Nie pozwól dezaktywować własnego konta
+  if (session && userId === session.id && !isActive) {
+    showToast('Nie możesz dezaktywować własnego konta', 'error'); return;
+  }
+
+  u.role = role;
+  u.is_active = isActive;
+  DB.set('users', users);
+  closeModal('modal-user-edit');
+  renderAdminUsers();
+  showToast('Użytkownik zaktualizowany', 'success');
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   ADMIN — DYŻURKI
+═══════════════════════════════════════════════════════════════ */
+function renderAdminDyzurki() {
+  const dyzurki = DB.get('dyzurki');
+  const tbody = document.getElementById('admin-dyz-tbody');
+  if (!dyzurki.length) { tbody.innerHTML = '<tr><td colspan="7" class="empty-state">Brak dyżurek</td></tr>'; return; }
+
+  tbody.innerHTML = dyzurki.map(d => `
+    <tr>
+      <td><span style="color:var(--accent);font-weight:700;letter-spacing:0.1em">${d.code}</span></td>
+      <td style="color:var(--text)">${d.name}</td>
+      <td><span class="badge badge-gray">${d.type}</span></td>
+      <td>${d.line || '—'}</td>
+      <td style="color:var(--text3)">${d.km || '—'}</td>
+      <td>
+        ${d.is_active
+          ? '<span class="badge badge-green">Aktywna</span>'
+          : '<span class="badge badge-red">Nieaktywna</span>'}
+      </td>
+      <td>
+        <button class="btn btn-sm btn-danger" onclick="toggleDyzurka(${d.id})">${d.is_active ? 'Dezaktywuj' : 'Aktywuj'}</button>
+      </td>
+    </tr>
+  `).join('');
+}
+
+function addDyzurka() {
+  const name = document.getElementById('new-dyz-name').value.trim();
+  const code = document.getElementById('new-dyz-code').value.trim().toUpperCase();
+  const line = document.getElementById('new-dyz-line').value.trim();
+  const km = document.getElementById('new-dyz-km').value.trim();
+  const type = document.getElementById('new-dyz-type').value;
+
+  if (!name || !code) { showToast('Nazwa i kod są wymagane', 'error'); return; }
+
+  const dyzurki = DB.get('dyzurki');
+  if (dyzurki.find(d => d.code === code)) { showToast(`Kod "${code}" już istnieje`, 'error'); return; }
+
+  dyzurki.push({
+    id: DB.nextId('dyzurki'),
+    name, code, line, km, type, is_active: true,
+    created_at: new Date().toISOString()
+  });
+  DB.set('dyzurki', dyzurki);
+
+  ['new-dyz-name','new-dyz-code','new-dyz-line','new-dyz-km'].forEach(id => {
+    document.getElementById(id).value = '';
+  });
+  renderAdminDyzurki();
+  showToast(`Dodano posterunek "${name}"`, 'success');
+}
+
+function toggleDyzurka(id) {
+  const dyzurki = DB.get('dyzurki');
+  const d = dyzurki.find(d => d.id === id);
+  if (!d) return;
+  d.is_active = !d.is_active;
+  DB.set('dyzurki', dyzurki);
+  renderAdminDyzurki();
+  showToast(`Posterunek "${d.name}" ${d.is_active ? 'aktywowany' : 'dezaktywowany'}`, 'success');
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   ADMIN — MATRYCA UPRAWNIEŃ
+═══════════════════════════════════════════════════════════════ */
+function renderPermSelect() {
+  const users = DB.get('users').filter(u => u.role !== 'admin');
+  const sel = document.getElementById('perm-user-select');
+  sel.innerHTML = '<option value="">— wybierz dyżurnego —</option>' +
+    users.map(u => `<option value="${u.id}">${u.fullname || u.login} (${u.login})</option>`).join('');
+}
+
+let selectedPerms = new Set();
+
+function loadUserPerms() {
+  const userId = parseInt(document.getElementById('perm-user-select').value);
+  if (!userId) { document.getElementById('perm-matrix-container').style.display = 'none'; return; }
+
+  const users = DB.get('users');
+  const user = users.find(u => u.id === userId);
+  const dyzurki = DB.get('dyzurki').filter(d => d.is_active);
+  const userDyzurki = DB.get('user_dyzurki');
+
+  selectedPerms = new Set(
+    userDyzurki.filter(ud => ud.user_id === userId).map(ud => ud.dyzurka_id)
+  );
+
+  document.getElementById('perm-matrix-title').textContent =
+    `Dyżurki dla: ${user ? (user.fullname || user.login) : '?'}`;
+  document.getElementById('perm-matrix-container').style.display = 'block';
+
+  const list = document.getElementById('perm-dyzurki-list');
+  list.innerHTML = dyzurki.map(d => `
+    <div class="perm-item ${selectedPerms.has(d.id) ? 'selected' : ''}"
+         onclick="togglePerm(${d.id}, this)"
+         data-id="${d.id}">
+      <div class="perm-checkbox"></div>
+      <div>
+        <div style="font-size:13px;color:var(--text)">
+          <span style="color:var(--accent);font-weight:700">${d.code}</span> — ${d.name}
+        </div>
+        <div style="font-size:11px;color:var(--text3)">${typeLabel(d.type)} · Linia ${d.line || '?'} · km ${d.km || '?'}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function togglePerm(id, el) {
+  if (selectedPerms.has(id)) selectedPerms.delete(id);
+  else selectedPerms.add(id);
+  el.classList.toggle('selected', selectedPerms.has(id));
+}
+
+function selectAllPerms() {
+  document.querySelectorAll('.perm-item').forEach(el => {
+    const id = parseInt(el.dataset.id);
+    selectedPerms.add(id);
+    el.classList.add('selected');
+  });
+}
+
+function clearAllPerms() {
+  selectedPerms.clear();
+  document.querySelectorAll('.perm-item').forEach(el => el.classList.remove('selected'));
+}
+
+function savePerms() {
+  const userId = parseInt(document.getElementById('perm-user-select').value);
+  if (!userId) return;
+  const session = getSession();
+
+  const allPerms = DB.get('user_dyzurki').filter(ud => ud.user_id !== userId);
+  const newPerms = Array.from(selectedPerms).map(dyzurkaId => ({
+    user_id: userId,
+    dyzurka_id: dyzurkaId,
+    granted_at: new Date().toISOString(),
+    granted_by: session ? session.id : 1
+  }));
+
+  DB.set('user_dyzurki', [...allPerms, ...newPerms]);
+  showToast(`Uprawnienia zapisane (${newPerms.length} dyżurek)`, 'success');
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   DASHBOARD DYŻURNEGO
+═══════════════════════════════════════════════════════════════ */
+function renderDashboard() {
+  const user = getSession();
+  document.getElementById('dashboard-greeting').textContent = user ? user.fullname || user.login : '—';
+
+  const userDyzurki = DB.get('user_dyzurki').filter(ud => ud.user_id === user.id);
+  const dyzurki = DB.get('dyzurki').filter(d => d.is_active);
+  const myDyzurki = dyzurki.filter(d => userDyzurki.some(ud => ud.dyzurka_id === d.id));
+
+  document.getElementById('dashboard-count').textContent = myDyzurki.length;
+
+  const grid = document.getElementById('dashboard-dyzurki-grid');
+  if (!myDyzurki.length) {
+    grid.innerHTML = '<div class="empty-state">Brak przypisanych dyżurek.<br>Skontaktuj się z administratorem.</div>';
+    return;
+  }
+
+  grid.innerHTML = myDyzurki.map(d => `
+    <div class="dyzurka-card" onclick="navigate('/dyzurka', {id: ${d.id}})">
+      <div class="dyzurka-card-code">${d.code}</div>
+      <div class="dyzurka-card-name">${d.name}</div>
+      <div class="dyzurka-card-meta">
+        <span class="badge badge-blue">${typeLabel(d.type)}</span>
+        ${d.line ? `<span class="badge badge-gray">Linia ${d.line}</span>` : ''}
+      </div>
+      <div class="dyzurka-card-line">km ${d.km || '?'} &nbsp;·&nbsp; <span class="text-green">● Aktywna</span></div>
+    </div>
+  `).join('');
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   EDR — WNĘTRZE DYŻURKI
+═══════════════════════════════════════════════════════════════ */
+function renderEDR(dyzurka) {
+  document.getElementById('edr-code').textContent = dyzurka.code;
+  document.getElementById('edr-name').textContent = dyzurka.name;
+  document.getElementById('edr-meta').textContent =
+    `${typeLabel(dyzurka.type)} · Linia nr ${dyzurka.line || '?'} · km ${dyzurka.km || '?'}`;
+
+  // Zegar
+  if (clockInterval) clearInterval(clockInterval);
+  const updateClock = () => {
+    const now = new Date();
+    document.getElementById('edr-clock').innerHTML =
+      now.toTimeString().slice(0,8) + ' <span class="blink">_</span>';
+    const days = ['Niedziela','Poniedziałek','Wtorek','Środa','Czwartek','Piątek','Sobota'];
+    document.getElementById('edr-date').textContent =
+      days[now.getDay()] + ', ' + now.toLocaleDateString('pl-PL', {day:'2-digit',month:'long',year:'numeric'});
+  };
+  updateClock();
+  clockInterval = setInterval(updateClock, 1000);
+
+  // Panel stanu urządzeń
+  renderStatusPanel(dyzurka);
+
+  // Pociągi demo
+  renderTrains(dyzurka.id);
+
+  // Dziennik
+  renderDziennik(dyzurka.id);
+}
+
+function renderStatusPanel(dyzurka) {
+  const statuses = [
+    { label: 'Blokada liniowa', value: 'Sprawna', dot: 'green' },
+    { label: 'Semafory wjazdowe', value: 'Sprawne (2/2)', dot: 'green' },
+    { label: 'Semafory wyjazdowe', value: 'Sprawne (4/4)', dot: 'green' },
+    { label: 'Przekaźnikownia', value: 'Normalna praca', dot: 'green' },
+    { label: 'Łączność telefoniczna', value: 'Czynna', dot: 'green' },
+    { label: 'Radio dyspozytorskie', value: 'Czynne', dot: 'green' },
+    { label: 'Zasilanie podstawowe', value: 'Sieć miejska', dot: 'green' },
+    { label: 'Zasilanie awaryjne', value: 'UPS naładowany', dot: 'green' },
+  ];
+
+  document.getElementById('edr-status-grid').innerHTML = statuses.map(s => `
+    <div class="status-item">
+      <div class="status-dot ${s.dot}"></div>
+      <div>
+        <div class="status-label">${s.label}</div>
+        <div class="status-value">${s.value}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderTrains(dyzurkaId) {
+  // Demo dane pociągów
+  const demoTrains = [
+    { nr: 'TLK 3117', relacja: 'Katowice → Warszawa', przyjazd: '14:22', odjazd: '14:24', status: 'ok' },
+    { nr: 'IC 1509', relacja: 'Kraków → Wrocław', przyjazd: '14:38', odjazd: '14:40', status: 'delay' },
+    { nr: 'ROJ 71312', relacja: 'Gliwice → Sosnowiec', przyjazd: '15:01', odjazd: '15:03', status: 'ok' },
+    { nr: 'EIC 104', relacja: 'Kraków → Gdańsk', przyjazd: '15:22', odjazd: '15:23', status: 'ok' },
+  ];
+
+  document.getElementById('edr-trains-tbody').innerHTML = demoTrains.map(t => `
+    <tr>
+      <td class="td-pociag">${t.nr}</td>
+      <td>${t.relacja}</td>
+      <td class="td-time">${t.przyjazd}</td>
+      <td class="td-time">${t.odjazd}</td>
+      <td class="${t.status === 'ok' ? 'td-status-ok' : 'td-status-delay'}">
+        ${t.status === 'ok' ? '● Rozkładowy' : '▲ Opóźniony ~8min'}
+      </td>
+    </tr>
+  `).join('');
+}
+
+function renderDziennik(dyzurkaId) {
+  const entries = DB.get('dziennik').filter(e => e.dyzurka_id === dyzurkaId)
+    .sort((a,b) => new Date(b.created_at) - new Date(a.created_at));
+
+  const container = document.getElementById('edr-dziennik-list');
+  if (!entries.length) {
+    container.innerHTML = '<div class="empty-state">Brak wpisów w dzienniku</div>';
+    return;
+  }
+
+  const typeColors = { info: 'blue', pociag: 'green', usterka: 'red', rozkaz: 'amber', zmiana: 'gray' };
+  const typeLabels2 = { info: 'INFO', pociag: 'RUCH', usterka: 'USTERKA', rozkaz: 'ROZKAZ', zmiana: 'ZMIANA' };
+
+  container.innerHTML = entries.map(e => `
+    <div style="padding:12px 0;border-bottom:1px solid var(--border);display:flex;gap:12px">
+      <div style="flex-shrink:0;padding-top:2px">
+        <span class="badge badge-${typeColors[e.type] || 'gray'}">${typeLabels2[e.type] || e.type}</span>
+      </div>
+      <div style="flex:1">
+        <div style="font-size:12px;color:var(--text);line-height:1.6">${e.text}</div>
+        ${e.train ? `<div style="font-size:11px;color:var(--accent);margin-top:4px">Pociąg: ${e.train}</div>` : ''}
+        <div style="font-size:10px;color:var(--text3);margin-top:6px;letter-spacing:0.08em">
+          ${fmtDate(e.created_at)} · ${e.author}
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function addDziennikEntry() {
+  if (!currentDyzurka) return;
+  document.getElementById('modal-entry-text').value = '';
+  document.getElementById('modal-entry-train').value = '';
+  openModal('modal-dziennik');
+}
+
+function saveDziennikEntry() {
+  const text = document.getElementById('modal-entry-text').value.trim();
+  const type = document.getElementById('modal-entry-type').value;
+  const train = document.getElementById('modal-entry-train').value.trim();
+
+  if (!text) { showToast('Treść wpisu jest wymagana', 'error'); return; }
+
+  const user = getSession();
+  const entries = DB.get('dziennik');
+  entries.push({
+    id: DB.nextId('dziennik'),
+    dyzurka_id: currentDyzurka.id,
+    type, text, train: train || null,
+    author: user ? (user.fullname || user.login) : '?',
+    created_at: new Date().toISOString()
+  });
+  DB.set('dziennik', entries);
+  closeModal('modal-dziennik');
+  renderDziennik(currentDyzurka.id);
+  showToast('Wpis dodany do dziennika', 'success');
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   ADMIN TABS
+═══════════════════════════════════════════════════════════════ */
+function adminTab(tab) {
+  ['users','dyzurki','uprawnienia'].forEach(t => {
+    document.getElementById('admin-tab-' + t).style.display = t === tab ? 'block' : 'none';
+    const btn = document.getElementById('tab-' + t);
+    if (btn) btn.classList.toggle('active', t === tab);
+  });
+
+  if (tab === 'dyzurki') renderAdminDyzurki();
+  if (tab === 'uprawnienia') { renderPermSelect(); }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   HELPERS
+═══════════════════════════════════════════════════════════════ */
+function showAlert(el, msg) {
+  el.textContent = msg;
+  el.classList.add('visible');
+  setTimeout(() => el.classList.remove('visible'), 4000);
+}
+
+function openModal(id) { document.getElementById(id).classList.add('visible'); }
+function closeModal(id) { document.getElementById(id).classList.remove('visible'); }
+
+let toastTimer;
+function showToast(msg, type = 'success') {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'toast-' + type;
+  el.classList.add('visible');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('visible'), 3500);
+}
+
+function fmtDate(iso) {
+  if (!iso) return '—';
+  const d = new Date(iso);
+  return d.toLocaleDateString('pl-PL') + ' ' + d.toTimeString().slice(0,5);
+}
+
+function typeLabel(t) {
+  const map = { stacja: 'Stacja', posterunek: 'Posterunek odgałęźny', podg: 'Podg.', sr: 'Srk.' };
+  return map[t] || t;
+}
+
+// Zamknij modal klikając overlay
+document.querySelectorAll('.modal-overlay').forEach(overlay => {
+  overlay.addEventListener('click', e => {
+    if (e.target === overlay) overlay.classList.remove('visible');
+  });
+});
+
+// Enter na ekranie logowania
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter') {
+    if (document.getElementById('page-login').classList.contains('active')) doDiscordLogin();
+  }
+});
+
+/* ═══════════════════════════════════════════════════════════════
+   BOOT
+═══════════════════════════════════════════════════════════════ */
+(async () => {
+  await initDB();
+  if (await handleDiscordCallback()) return;
+
+  const user = getSession();
+  if (user) {
+    if (user.role === 'admin') navigate('/admin');
+    else navigate('/dashboard');
+  } else {
+    showPage('login');
+  }
+})();
+</script>
+</body>
+</html>
