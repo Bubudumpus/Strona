@@ -3,28 +3,37 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>EDR — Elektroniczny Dziennik Ruchu</title>
+<title>EDR</title>
 <style>
-  :root {
-    --bg: #0a0e1a;
-    --surface: #111827;
-    --surface2: #1a2235;
-    --border: #1f2d45;
-    --border2: #2a3d5a;
-    --text: #e2e8f4;
-    --text2: #8a9ab8;
-    --text3: #5a6b88;
-    --accent: #3b82f6;
-    --accent2: #1d4ed8;
-    --green: #10b981;
-    --green2: #065f46;
-    --red: #ef4444;
-    --red2: #7f1d1d;
-    --amber: #f59e0b;
-    --amber2: #78350f;
-    --radius: 8px;
-    --radius2: 12px;
-  }
+ :root {
+  --bg: #0f1115;
+  --surface: #171a1f;
+  --surface2: #1f2329;
+
+  --border: #2a2f36;
+  --border2: #3a4048;
+
+  --text: #e5e7eb;
+  --text2: #a1a1aa;
+  --text3: #71717a;
+
+  --accent: #9ca3af;
+  --accent2: #d1d5db;
+  --accent-soft: rgba(156,163,175,0.14);
+  --accent-border: rgba(156,163,175,0.28);
+
+  --green: #22c55e;
+  --green2: #14532d;
+
+  --red: #ef4444;
+  --red2: #7f1d1d;
+
+  --amber: #f59e0b;
+  --amber2: #78350f;
+
+  --radius: 8px;
+  --radius2: 12px;
+}
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
     font-family: 'Courier New', Courier, monospace;
@@ -82,7 +91,7 @@
     letter-spacing: 0.1em;
     text-transform: uppercase;
   }
-  .role-admin { background: rgba(59,130,246,0.15); color: var(--accent); border: 1px solid rgba(59,130,246,0.3); }
+  .role-admin { background: var(--accent-soft); color: var(--accent2); border: 1px solid var(--accent-border); }
   .role-dyzurny { background: rgba(16,185,129,0.15); color: var(--green); border: 1px solid rgba(16,185,129,0.3); }
   .btn-logout {
     background: transparent;
@@ -109,7 +118,7 @@
     justify-content: center;
     flex-direction: column;
     gap: 32px;
-    background: radial-gradient(ellipse at center, #0d1627 0%, #0a0e1a 70%);
+    background: radial-gradient(ellipse at center, #171a1f 0%, #0f1115 70%);
   }
   #page-login.active { display: flex; }
   body.is-authenticated #page-login {
@@ -129,7 +138,7 @@
     font-weight: 700;
     letter-spacing: 0.15em;
     color: var(--accent);
-    text-shadow: 0 0 40px rgba(59,130,246,0.4);
+    text-shadow: 0 0 34px rgba(156,163,175,0.25);
   }
   .login-logo .sub-text {
     font-size: 11px;
@@ -191,13 +200,13 @@
   }
   .btn-primary:hover { background: var(--accent2); }
   .btn-discord {
-    background: #5865f2;
+    background: #4b5563;
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 10px;
   }
-  .btn-discord:hover { background: #4752c4; }
+  .btn-discord:hover { background: #6b7280; }
   .discord-note {
     color: var(--text3);
     font-size: 12px;
@@ -310,7 +319,7 @@
   }
   .badge-green { background: rgba(16,185,129,0.15); color: var(--green); border: 1px solid rgba(16,185,129,0.3); }
   .badge-red { background: rgba(239,68,68,0.15); color: var(--red); border: 1px solid rgba(239,68,68,0.3); }
-  .badge-blue { background: rgba(59,130,246,0.15); color: var(--accent); border: 1px solid rgba(59,130,246,0.3); }
+  .badge-blue { background: var(--accent-soft); color: var(--accent2); border: 1px solid var(--accent-border); }
   .badge-amber { background: rgba(245,158,11,0.15); color: var(--amber); border: 1px solid rgba(245,158,11,0.3); }
   .badge-gray { background: rgba(90,107,136,0.15); color: var(--text3); border: 1px solid rgba(90,107,136,0.3); }
 
@@ -523,7 +532,7 @@
     transition: all 0.15s;
   }
   .perm-item:hover { border-color: var(--border2); }
-  .perm-item.selected { border-color: var(--accent); background: rgba(59,130,246,0.08); }
+  .perm-item.selected { border-color: var(--accent); background: rgba(156,163,175,0.09); }
   .perm-checkbox {
     width: 16px;
     height: 16px;
@@ -589,6 +598,339 @@
   .blink { animation: blink 1s step-start infinite; }
   @keyframes blink { 50% { opacity: 0; } }
 
+  /* ─── RETRO DESKTOP THEME AFTER LOGIN ─── */
+  body.is-authenticated {
+    --bg: #c8c5bd;
+    --surface: #d8d5cd;
+    --surface2: #ece9df;
+    --border: #8f8b82;
+    --border2: #5c5850;
+    --text: #111;
+    --text2: #222;
+    --text3: #4b4740;
+    --accent: #0b4a91;
+    --accent2: #0f62b7;
+    --accent-soft: #d9e6f6;
+    --accent-border: #345f93;
+    background: #bdb9b0;
+    color: #111;
+    font-family: Tahoma, "MS Sans Serif", Arial, sans-serif;
+    font-size: 12px;
+  }
+  body.is-authenticated::before { display: none; }
+  body.is-authenticated #navbar {
+    height: 26px;
+    padding: 0 6px;
+    background: linear-gradient(90deg, #0b3f7a 0%, #6aa3d8 100%);
+    border-bottom: 1px solid #404040;
+    color: #fff;
+    position: sticky;
+  }
+  body.is-authenticated .nav-brand {
+    color: #fff;
+    font-size: 12px;
+    letter-spacing: 0;
+    text-transform: none;
+  }
+  body.is-authenticated .nav-brand::before {
+    content: '';
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    margin-right: 5px;
+    vertical-align: -2px;
+    background: linear-gradient(135deg, #d02020 0 50%, #fff 50% 70%, #111 70%);
+    border: 1px solid #111;
+  }
+  body.is-authenticated .nav-brand span,
+  body.is-authenticated .nav-user { color: #f4f4f4; }
+  body.is-authenticated .nav-right { gap: 6px; }
+  body.is-authenticated .nav-role,
+  body.is-authenticated .badge {
+    border-radius: 0;
+    letter-spacing: 0;
+    font-size: 11px;
+    padding: 1px 5px;
+  }
+  body.is-authenticated .role-admin,
+  body.is-authenticated .badge-blue {
+    background: #dfe7f3;
+    color: #071d38;
+    border: 1px solid #234f86;
+  }
+  body.is-authenticated .role-dyzurny,
+  body.is-authenticated .badge-green {
+    background: #d8ead4;
+    color: #064b11;
+    border: 1px solid #4a8b45;
+  }
+  body.is-authenticated .badge-red { background: #f0c5c5; color: #670000; border: 1px solid #a24a4a; }
+  body.is-authenticated .badge-amber { background: #f4e79f; color: #3f3200; border: 1px solid #9a8b34; }
+  body.is-authenticated .badge-gray { background: #e5e2d8; color: #222; border: 1px solid #8d887c; }
+  body.is-authenticated .page {
+    min-height: calc(100vh - 26px);
+    background: #c8c5bd;
+  }
+  body.is-authenticated .page-inner {
+    max-width: none;
+    margin: 0;
+    padding: 6px;
+  }
+  body.is-authenticated .page-header {
+    margin: 0 0 6px;
+    padding: 4px 6px;
+    background: #d8d5cd;
+    border: 2px solid;
+    border-color: #fff #777 #777 #fff;
+    align-items: center;
+  }
+  body.is-authenticated .page-title {
+    color: #111;
+    font-size: 12px;
+    letter-spacing: 0;
+    text-transform: none;
+    font-weight: 700;
+  }
+  body.is-authenticated .page-title span {
+    display: inline;
+    margin-left: 8px;
+    color: #0b3f7a;
+    font-size: 12px;
+    letter-spacing: 0;
+  }
+  body.is-authenticated .tabs {
+    gap: 0;
+    margin: 0 0 4px;
+    border-bottom: 1px solid #777;
+  }
+  body.is-authenticated .tab {
+    border-radius: 0;
+    border: 1px solid;
+    border-color: #fff #777 #777 #fff;
+    background: #d8d5cd;
+    color: #111;
+    padding: 4px 10px;
+    margin-right: 2px;
+    font-size: 12px;
+    letter-spacing: 0;
+    text-transform: none;
+    box-shadow: inset 1px 1px 0 #f7f7f7;
+  }
+  body.is-authenticated .tab.active {
+    background: #ece9df;
+    color: #000;
+    border-bottom-color: #ece9df;
+  }
+  body.is-authenticated .card,
+  body.is-authenticated .modal,
+  body.is-authenticated .status-item,
+  body.is-authenticated .dyzurka-card {
+    background: #d8d5cd;
+    border: 2px solid;
+    border-color: #fff #777 #777 #fff;
+    border-radius: 0;
+    box-shadow: none;
+  }
+  body.is-authenticated .card {
+    padding: 6px;
+    margin-bottom: 6px;
+  }
+  body.is-authenticated .card-title {
+    margin: -6px -6px 6px;
+    padding: 3px 6px;
+    background: linear-gradient(90deg, #0b3f7a, #6aa3d8);
+    color: #fff;
+    border: 0;
+    font-size: 12px;
+    letter-spacing: 0;
+    text-transform: none;
+    font-weight: 700;
+  }
+  body.is-authenticated .btn,
+  body.is-authenticated .btn-primary,
+  body.is-authenticated .btn-logout,
+  body.is-authenticated .form-input,
+  body.is-authenticated .form-select {
+    border-radius: 0;
+    font-family: Tahoma, "MS Sans Serif", Arial, sans-serif;
+    font-size: 12px;
+  }
+  body.is-authenticated .btn,
+  body.is-authenticated .btn-primary,
+  body.is-authenticated .btn-logout {
+    background: #d8d5cd;
+    color: #111;
+    border: 2px solid;
+    border-color: #fff #777 #777 #fff;
+    padding: 3px 10px;
+    letter-spacing: 0;
+    text-transform: none;
+    box-shadow: inset 1px 1px 0 #f7f7f7;
+  }
+  body.is-authenticated .btn:hover,
+  body.is-authenticated .btn-primary:hover,
+  body.is-authenticated .btn-logout:hover {
+    background: #ece9df;
+    color: #000;
+  }
+  body.is-authenticated .btn:active,
+  body.is-authenticated .btn-primary:active,
+  body.is-authenticated .btn-logout:active {
+    border-color: #777 #fff #fff #777;
+    box-shadow: inset 1px 1px 2px #777;
+  }
+  body.is-authenticated .form-input,
+  body.is-authenticated .form-select {
+    background: #fffef0;
+    color: #111;
+    border: 2px solid;
+    border-color: #777 #fff #fff #777;
+    padding: 3px 5px;
+  }
+  body.is-authenticated .form-label {
+    color: #111;
+    font-size: 11px;
+    letter-spacing: 0;
+    text-transform: none;
+  }
+  body.is-authenticated .data-table,
+  body.is-authenticated .dziennik-table {
+    border-collapse: collapse;
+    background: #fffde8;
+    color: #111;
+    font-family: Tahoma, "MS Sans Serif", Arial, sans-serif;
+    font-size: 12px;
+  }
+  body.is-authenticated .data-table th,
+  body.is-authenticated .dziennik-table th {
+    background: linear-gradient(#f4f1e7, #b9b5aa);
+    color: #111;
+    border: 1px solid #777;
+    padding: 2px 4px;
+    font-size: 11px;
+    letter-spacing: 0;
+    text-transform: none;
+    text-align: left;
+  }
+  body.is-authenticated .data-table td,
+  body.is-authenticated .dziennik-table td {
+    color: #111;
+    border: 1px solid #b8b4a8;
+    padding: 2px 4px;
+    font-size: 12px;
+    height: 21px;
+    background: #fffde8;
+  }
+  body.is-authenticated .data-table tr:nth-child(even) td,
+  body.is-authenticated .dziennik-table tr:nth-child(even) td { background: #f4f1da; }
+  body.is-authenticated .data-table tr:hover td,
+  body.is-authenticated .dziennik-table tr:hover td { background: #0b78b5; color: #fff; }
+  body.is-authenticated .data-table td:nth-child(1) { background: #e6e3d5; }
+  body.is-authenticated .data-table td:nth-child(2) { background: #d9e7f7; }
+  body.is-authenticated .data-table td:nth-child(3) { background: #dcebd6; }
+  body.is-authenticated .data-table tr:hover td:nth-child(1),
+  body.is-authenticated .data-table tr:hover td:nth-child(2),
+  body.is-authenticated .data-table tr:hover td:nth-child(3) {
+    background: #0b78b5;
+    color: #fff;
+  }
+  body.is-authenticated .dyzurka-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 6px;
+  }
+  body.is-authenticated .dyzurka-card {
+    padding: 8px;
+    transition: none;
+  }
+  body.is-authenticated .dyzurka-card::before { display: none; }
+  body.is-authenticated .dyzurka-card:hover {
+    transform: none;
+    border-color: #777 #fff #fff #777;
+    background: #ece9df;
+  }
+  body.is-authenticated .dyzurka-card-code {
+    color: #0b3f7a;
+    font-size: 13px;
+    letter-spacing: 0;
+    font-weight: 700;
+  }
+  body.is-authenticated .dyzurka-card-name {
+    color: #111;
+    font-size: 12px;
+    margin-bottom: 5px;
+  }
+  body.is-authenticated .edr-header {
+    background: #d8d5cd;
+    border: 2px solid;
+    border-color: #fff #777 #777 #fff;
+    padding: 5px 6px;
+  }
+  body.is-authenticated .edr-station-code {
+    color: #0b3f7a;
+    font-size: 20px;
+    letter-spacing: 0;
+  }
+  body.is-authenticated .edr-clock {
+    background: #000080;
+    color: #fff;
+    padding: 2px 8px;
+    text-shadow: none;
+    letter-spacing: 0;
+    font-size: 34px;
+    border: 2px solid;
+    border-color: #777 #fff #fff #777;
+  }
+  body.is-authenticated .edr-body { padding: 6px; }
+  body.is-authenticated .edr-grid { gap: 6px; }
+  body.is-authenticated .status-grid { gap: 6px; margin-bottom: 6px; }
+  body.is-authenticated .status-label {
+    color: #333;
+    letter-spacing: 0;
+    text-transform: none;
+  }
+  body.is-authenticated .status-value { color: #000; }
+  body.is-authenticated .perm-item {
+    background: #ece9df;
+    color: #111;
+    border-radius: 0;
+    border: 1px solid #999;
+    padding: 4px 6px;
+  }
+  body.is-authenticated .perm-item.selected {
+    background: #d9e6f6;
+    border-color: #0b3f7a;
+  }
+  body.is-authenticated .perm-checkbox {
+    border-radius: 0;
+    background: #fff;
+    border: 2px solid;
+    border-color: #777 #fff #fff #777;
+  }
+  body.is-authenticated .empty-state {
+    color: #333;
+    background: #ece9df;
+    border: 2px solid;
+    border-color: #777 #fff #fff #777;
+    padding: 18px;
+  }
+  body.is-authenticated #toast {
+    background: #fffde8;
+    color: #111;
+    border-radius: 0;
+    border: 2px solid;
+    border-color: #fff #777 #777 #fff;
+    box-shadow: 2px 2px 0 rgba(0,0,0,0.25);
+  }
+  body.is-authenticated ::-webkit-scrollbar { width: 16px; height: 16px; }
+  body.is-authenticated ::-webkit-scrollbar-track { background: #d8d5cd; border: 1px solid #888; }
+  body.is-authenticated ::-webkit-scrollbar-thumb {
+    background: #b9b5aa;
+    border: 2px solid;
+    border-color: #fff #777 #777 #fff;
+    border-radius: 0;
+  }
+
   /* scrollbar */
   ::-webkit-scrollbar { width: 6px; }
   ::-webkit-scrollbar-track { background: var(--bg); }
@@ -616,6 +958,7 @@
 <div id="page-login" class="page">
   <div class="login-logo">
     <div class="big-text">EDR</div>
+    <div class="sub-text">Elektroniczny Dziennik Ruchu · System Zarządzania Posterunkami</div>
   </div>
   <div class="login-card">
     <div id="discord-login-wrapper">
@@ -625,7 +968,14 @@
         <span>Discord</span>
         <span>Zaloguj się</span>
       </button>
+      <div class="discord-note">
+        Dostęp do EDR jest oparty o konto Discord. Użytkownik o ID
+        <strong>493468210570461195</strong> otrzyma automatycznie rolę Administratora.
+      </div>
     </div>
+  </div>
+  <div style="font-size:11px;color:var(--text3);letter-spacing:0.1em;text-align:center">
+    Skonfiguruj DISCORD_CLIENT_ID w pliku, aby uruchomić logowanie OAuth2
   </div>
 </div>
 
