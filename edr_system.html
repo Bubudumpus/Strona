@@ -180,6 +180,14 @@
     margin-top: 8px;
   }
   .btn-primary:hover { background: var(--accent2); }
+  .btn-discord {
+    background: #5865f2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+  }
+  .btn-discord:hover { background: #4752c4; }
   .discord-note {
     color: var(--text3);
     font-size: 12px;
@@ -595,7 +603,7 @@
 <!-- ════════════════════════════════════════════════
      PAGE: DISCORD LOGIN
 ════════════════════════════════════════════════ -->
-<div id="page-login" class="page active">
+<div id="page-login" class="page">
   <div class="login-logo">
     <div class="big-text">EDR</div>
     <div class="sub-text">Elektroniczny Dziennik Ruchu · System Zarządzania Posterunkami</div>
@@ -604,8 +612,13 @@
     <div id="discord-login-wrapper">
       <div class="login-title">Logowanie przez Discord</div>
       <div class="alert error" id="login-error"></div>
+      <button class="btn-primary btn-discord" onclick="doDiscordLogin()">
+        <span>Discord</span>
+        <span>Zaloguj się</span>
+      </button>
       <div class="discord-note">
-        Przekierowywanie do Discord...
+        Dostęp do EDR jest oparty o konto Discord. Użytkownik o ID
+        <strong>493468210570461195</strong> otrzyma automatycznie rolę Administratora.
       </div>
     </div>
   </div>
@@ -985,9 +998,9 @@ function navigate(path, params = {}) {
   // ── MIDDLEWARE AUTORYZACJI ──
   const user = getSession();
 
-  if (path === '/login') { startDiscordLogin(); return; }
+  if (path === '/login') { showPage('login'); return; }
 
-  if (!user) { startDiscordLogin(); return; }
+  if (!user) { showPage('login'); return; }
 
   // Aktualizuj navbar
   document.getElementById('nav-username').textContent = user.fullname || user.login;
@@ -1063,11 +1076,6 @@ function goBack() {
 /* ═══════════════════════════════════════════════════════════════
    AUTH — DISCORD OAUTH / WYLOGOWANIE
 ═══════════════════════════════════════════════════════════════ */
-function startDiscordLogin() {
-  showPage('login');
-  window.setTimeout(doDiscordLogin, 150);
-}
-
 function doDiscordLogin() {
   const errEl = document.getElementById('login-error');
 
@@ -1635,7 +1643,7 @@ document.addEventListener('keydown', e => {
     if (user.role === 'admin') navigate('/admin');
     else navigate('/dashboard');
   } else {
-    startDiscordLogin();
+    showPage('login');
   }
 })();
 </script>
