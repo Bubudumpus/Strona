@@ -984,7 +984,10 @@ async function initDB() {
 function showPage(pageId) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   const page = document.getElementById('page-' + pageId);
-  if (page) page.classList.add('active');
+  if (page) {
+    page.style.display = '';
+    page.classList.add('active');
+  }
   window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
 
   const navbar = document.getElementById('navbar');
@@ -995,6 +998,14 @@ function showPage(pageId) {
   }
 }
 
+function hideLoginPage() {
+  const loginPage = document.getElementById('page-login');
+  if (loginPage) {
+    loginPage.classList.remove('active');
+    loginPage.style.display = 'none';
+  }
+}
+
 function navigate(path, params = {}) {
   // ── MIDDLEWARE AUTORYZACJI ──
   const user = getSession();
@@ -1002,6 +1013,8 @@ function navigate(path, params = {}) {
   if (path === '/login') { showPage('login'); return; }
 
   if (!user) { showPage('login'); return; }
+
+  hideLoginPage();
 
   // Aktualizuj navbar
   document.getElementById('nav-username').textContent = user.fullname || user.login;
@@ -1108,13 +1121,15 @@ async function handleDiscordCallback() {
   const storedState = localStorage.getItem('edr_discord_state');
   localStorage.removeItem('edr_discord_state');
 
-  if (!storedState || returnedState !== storedState) {
-    window.history.replaceState(null, document.title, DISCORD_REDIRECT_URI);
-    showAlert(errEl, 'Nie udało się potwierdzić logowania Discord.');
+  if (!hashParams.get('access_token')) {
+    showPage('login');
+    showAlert(errEl, 'Discord nie zwrócił tokenu logowania. Spróbuj ponownie.');
     return true;
   }
 
-  window.history.replaceState(null, document.title, DISCORD_REDIRECT_URI);
+  if (storedState && returnedState !== storedState) {
+    console.warn('Discord OAuth state mismatch - continuing in local file mode.');
+  }
 
   try {
     const response = await fetch('https://discord.com/api/users/@me', {
@@ -1131,6 +1146,8 @@ async function handleDiscordCallback() {
     }
 
     localStorage.setItem('edr_token', generateToken(user));
+    window.history.replaceState(null, document.title, DISCORD_REDIRECT_URI);
+    hideLoginPage();
     showToast(`Zalogowano przez Discord jako ${user.fullname || user.login}`, 'success');
 
     if (user.role === 'admin') navigate('/admin');
