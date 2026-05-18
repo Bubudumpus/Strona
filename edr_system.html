@@ -104,13 +104,14 @@
   /* ─── LOGIN PAGE ─── */
   #page-login {
     min-height: 100vh;
-    display: flex;
+    display: none;
     align-items: center;
     justify-content: center;
     flex-direction: column;
     gap: 32px;
     background: radial-gradient(ellipse at center, #0d1627 0%, #0a0e1a 70%);
   }
+  #page-login.active { display: flex; }
   .login-logo {
     text-align: center;
   }
