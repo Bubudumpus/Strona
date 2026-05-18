@@ -882,7 +882,162 @@
     border-color: #777 #fff #fff #777;
   }
   body.is-authenticated .edr-body { padding: 6px; }
-  body.is-authenticated .edr-grid { gap: 6px; }
+  body.is-authenticated .edr-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 320px;
+    gap: 6px;
+    align-items: start;
+  }
+  body.is-authenticated .edr-control-strip {
+    background: #d8d5cd;
+    border: 2px solid;
+    border-color: #fff #777 #777 #fff;
+    margin-bottom: 6px;
+    padding: 3px;
+  }
+  body.is-authenticated .edr-menu-row {
+    display: flex;
+    gap: 18px;
+    padding: 1px 4px 5px;
+    font-size: 13px;
+    font-style: italic;
+    color: #111;
+  }
+  body.is-authenticated .edr-tabs-row {
+    display: flex;
+    gap: 1px;
+    border-bottom: 1px solid #999;
+    margin-bottom: 5px;
+  }
+  body.is-authenticated .edr-tab {
+    border: 1px solid;
+    border-color: #fff #777 #777 #fff;
+    background: #d8d5cd;
+    color: #2b0050;
+    padding: 3px 8px;
+    font: 12px Tahoma, "MS Sans Serif", Arial, sans-serif;
+  }
+  body.is-authenticated .edr-tab.active {
+    background: #ece9df;
+    color: #111;
+    border-bottom-color: #ece9df;
+  }
+  body.is-authenticated .edr-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 18px;
+    align-items: end;
+    padding: 2px 4px;
+    color: #111;
+  }
+  body.is-authenticated .edr-filter-title {
+    margin-bottom: 3px;
+    color: #111;
+  }
+  body.is-authenticated .edr-filters label {
+    margin-right: 8px;
+    white-space: nowrap;
+  }
+  body.is-authenticated .edr-search-box {
+    min-width: 150px;
+  }
+  body.is-authenticated .edr-search-box label,
+  body.is-authenticated .edr-notes-row label {
+    display: block;
+    color: #000080;
+    font-size: 12px;
+    margin-bottom: 2px;
+  }
+  body.is-authenticated .edr-notes-row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 5px;
+    align-items: end;
+    padding: 2px 4px 3px;
+    max-width: 560px;
+  }
+  body.is-authenticated .edr-notes-row label { grid-column: 1 / -1; }
+  body.is-authenticated .edr-table-wrap {
+    overflow: auto;
+    border: 2px solid;
+    border-color: #777 #fff #fff #777;
+    background: #fffde8;
+    max-height: calc(100vh - 292px);
+    min-height: 330px;
+  }
+  body.is-authenticated .edr-timetable {
+    min-width: 1320px;
+  }
+  body.is-authenticated .edr-timetable th {
+    text-align: center;
+    white-space: nowrap;
+    background: linear-gradient(#f7f4e9, #9c9588);
+  }
+  body.is-authenticated .edr-timetable td {
+    text-align: center;
+    white-space: nowrap;
+  }
+  body.is-authenticated .edr-timetable .check-cell {
+    width: 18px;
+    background: #efede2;
+    font-weight: 700;
+  }
+  body.is-authenticated .edr-timetable .dir-in,
+  body.is-authenticated .edr-timetable .nr-in {
+    background: #9fbbe5;
+  }
+  body.is-authenticated .edr-timetable .dir-out,
+  body.is-authenticated .edr-timetable .nr-out {
+    background: #bddac0;
+  }
+  body.is-authenticated .edr-timetable .nr-in,
+  body.is-authenticated .edr-timetable .nr-out {
+    font-weight: 700;
+    font-family: "Courier New", monospace;
+    color: #00122b;
+  }
+  body.is-authenticated .edr-timetable .line-cell { background: #edf08c; }
+  body.is-authenticated .edr-timetable .delay-cell { background: #ffd7b8; }
+  body.is-authenticated .edr-timetable .pass-cell { background: #18d8d0; }
+  body.is-authenticated .edr-timetable .number-hot {
+    background: #ffff00 !important;
+    outline: 2px solid #12c812;
+  }
+  body.is-authenticated .edr-timetable tr.row-selected td {
+    background: #0088ba !important;
+    color: #fff;
+  }
+  body.is-authenticated .edr-timetable tr.row-passing td {
+    background: #ff00d9 !important;
+    color: #fff;
+  }
+  body.is-authenticated .edr-timetable tr.row-warning td:nth-child(16),
+  body.is-authenticated .edr-timetable tr.row-warning td:nth-child(13) {
+    background: #ffc19a !important;
+    color: #111;
+  }
+  body.is-authenticated .edr-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 9px 16px;
+    padding: 6px 2px 0;
+    color: #111;
+    font-size: 11px;
+  }
+  body.is-authenticated .edr-legend span { display: inline-flex; align-items: center; gap: 4px; }
+  body.is-authenticated .lg {
+    width: 18px;
+    height: 14px;
+    display: inline-block;
+    border: 1px solid #777;
+  }
+  body.is-authenticated .lg-k { background: #fffde8; }
+  body.is-authenticated .lg-nk { background: #8b008b; }
+  body.is-authenticated .lg-delay { background: #7b0000; }
+  body.is-authenticated .lg-number { background: #ffff00; }
+  body.is-authenticated .lg-arr { background: #ff00d9; }
+  body.is-authenticated .lg-dep { background: #00e000; }
+  body.is-authenticated .lg-stop { background: #18d8d0; }
   body.is-authenticated .status-grid { gap: 6px; margin-bottom: 6px; }
   body.is-authenticated .status-label {
     color: #333;
@@ -941,7 +1096,7 @@
 
 <!-- NAVBAR -->
 <nav id="navbar">
-  <div class="nav-brand">EDR <span>/ Elektroniczny Dziennik Ruchu</span></div>
+  <div class="nav-brand">EDR <span>/ System Zarządzania Ruchem</span></div>
   <div class="nav-right">
     <span class="nav-user" id="nav-username">—</span>
     <span class="nav-role" id="nav-role-badge">—</span>
@@ -958,7 +1113,7 @@
 <div id="page-login" class="page">
   <div class="login-logo">
     <div class="big-text">EDR</div>
-    <div class="sub-text">Elektroniczny Dziennik Ruchu</div>
+    <div class="sub-text">Elektroniczny Dziennik Ruchu · System Zarządzania Posterunkami</div>
   </div>
   <div class="login-card">
     <div id="discord-login-wrapper">
@@ -968,7 +1123,14 @@
         <span>Discord</span>
         <span>Zaloguj się</span>
       </button>
+      <div class="discord-note">
+        Dostęp do EDR jest oparty o konto Discord. Użytkownik o ID
+        <strong>493468210570461195</strong> otrzyma automatycznie rolę Administratora.
+      </div>
     </div>
+  </div>
+  <div style="font-size:11px;color:var(--text3);letter-spacing:0.1em;text-align:center">
+    Skonfiguruj DISCORD_CLIENT_ID w pliku, aby uruchomić logowanie OAuth2
   </div>
 </div>
 
@@ -1120,28 +1282,81 @@
 
   <div class="edr-body">
     <div class="edr-grid">
-      <!-- LEWA KOLUMNA -->
-      <div>
+      <div class="edr-main">
+        <div class="edr-control-strip">
+          <div class="edr-menu-row">
+            <span>Symulacja</span>
+            <span>Narzędzia</span>
+            <span>Pomoc</span>
+          </div>
+          <div class="edr-tabs-row">
+            <button class="edr-tab active">Wykaz pociągów</button>
+            <button class="edr-tab">Opis pociągu</button>
+            <button class="edr-tab">Rozkład jazdy</button>
+            <button class="edr-tab">Pozostałe urządzenia</button>
+          </div>
+          <div class="edr-filters">
+            <div>
+              <div class="edr-filter-title">Potwierdzenie przez dyspozytora</div>
+              <label><input type="radio" checked> wszystkie</label>
+              <label><input type="radio"> potwierdz.</label>
+              <label><input type="radio"> nie potwierdz.</label>
+            </div>
+            <div>
+              <div class="edr-filter-title">Pociągi</div>
+              <label><input type="radio" checked> wszystkie</label>
+              <label><input type="radio"> uruch.+koń.</label>
+              <label><input type="radio"> uruchamian.</label>
+              <label><input type="radio"> kończące</label>
+              <label><input type="radio"> kursujące</label>
+            </div>
+            <div class="edr-search-box">
+              <label>Nr pociągu</label>
+              <input class="form-input" id="edr-train-search" oninput="renderTrains(currentDyzurka)" placeholder="">
+            </div>
+          </div>
+          <div class="edr-notes-row">
+            <label>Uwagi Eksploatacyjne:</label>
+            <input class="form-input" id="edr-operational-notes" value="">
+            <button class="btn btn-sm">Opis oznaczeń</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Wykaz pociągów — stan bieżący</div>
+          <div class="edr-table-wrap">
+            <table class="dziennik-table edr-timetable" id="edr-trains-table">
+              <thead>
+                <tr>
+                  <th>K</th><th>NK</th><th>Prz. plan.</th><th>+/-</th><th>Prz. rzecz.</th><th>Rodz.</th>
+                  <th>Z kierunku post.</th><th>Nr poc.</th><th>Nr poc.</th><th>W kierunku post.</th>
+                  <th>Nr L.</th><th>P. zam.</th><th>P. obl.</th><th>Typ p.</th>
+                  <th>Odj. plan.</th><th>+/-</th><th>Odj. rzecz.</th>
+                  <th>Stacja początkowa</th><th>Stacja końcowa</th><th>Przewoźnik</th>
+                </tr>
+              </thead>
+              <tbody id="edr-trains-tbody"></tbody>
+            </table>
+          </div>
+          <div class="edr-legend">
+            <span><b class="lg lg-k"></b> Kursuje</span>
+            <span><b class="lg lg-nk"></b> Nie kursuje</span>
+            <span><b class="lg lg-delay"></b> Opóźnienie</span>
+            <span><b class="lg lg-number"></b> Numer pociągu</span>
+            <span><b class="lg lg-arr"></b> Przyjazd poc.</span>
+            <span><b class="lg lg-dep"></b> Odjazd poc.</span>
+            <span><b class="lg lg-stop"></b> Przejazd poc. bez zatrzymania</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="edr-side">
         <div class="card">
           <div class="card-title">Stan urządzeń posterunku</div>
           <div class="status-grid" id="edr-status-grid">
             <!-- dynamicznie generowane -->
           </div>
         </div>
-        <div class="card">
-          <div class="card-title">Pociągi w obszarze — stan bieżący</div>
-          <table class="dziennik-table" id="edr-trains-table">
-            <thead>
-              <tr>
-                <th>Nr poc.</th><th>Relacja</th><th>Przyjazd</th><th>Odjazd</th><th>Status</th>
-              </tr>
-            </thead>
-            <tbody id="edr-trains-tbody"></tbody>
-          </table>
-        </div>
-      </div>
-      <!-- PRAWA KOLUMNA -->
-      <div>
         <div class="card">
           <div class="card-title">Dziennik ruchu — wpisy</div>
           <div id="edr-dziennik-list" style="max-height:520px;overflow-y:auto">
@@ -1837,8 +2052,8 @@ function renderEDR(dyzurka) {
   // Panel stanu urządzeń
   renderStatusPanel(dyzurka);
 
-  // Pociągi demo
-  renderTrains(dyzurka.id);
+  // Wykaz pociągów dla wybranej stacji
+  renderTrains(dyzurka);
 
   // Dziennik
   renderDziennik(dyzurka.id);
@@ -1867,26 +2082,137 @@ function renderStatusPanel(dyzurka) {
   `).join('');
 }
 
-function renderTrains(dyzurkaId) {
-  // Demo dane pociągów
-  const demoTrains = [
-    { nr: 'TLK 3117', relacja: 'Katowice → Warszawa', przyjazd: '14:22', odjazd: '14:24', status: 'ok' },
-    { nr: 'IC 1509', relacja: 'Kraków → Wrocław', przyjazd: '14:38', odjazd: '14:40', status: 'delay' },
-    { nr: 'ROJ 71312', relacja: 'Gliwice → Sosnowiec', przyjazd: '15:01', odjazd: '15:03', status: 'ok' },
-    { nr: 'EIC 104', relacja: 'Kraków → Gdańsk', przyjazd: '15:22', odjazd: '15:23', status: 'ok' },
-  ];
+function renderTrains(dyzurka) {
+  if (!dyzurka) return;
 
-  document.getElementById('edr-trains-tbody').innerHTML = demoTrains.map(t => `
-    <tr>
-      <td class="td-pociag">${t.nr}</td>
-      <td>${t.relacja}</td>
-      <td class="td-time">${t.przyjazd}</td>
-      <td class="td-time">${t.odjazd}</td>
-      <td class="${t.status === 'ok' ? 'td-status-ok' : 'td-status-delay'}">
-        ${t.status === 'ok' ? '● Rozkładowy' : '▲ Opóźniony ~8min'}
-      </td>
+  const query = (document.getElementById('edr-train-search')?.value || '').trim();
+  const rows = generateStationTrains(dyzurka)
+    .filter(t => !query || t.nrIn.includes(query) || t.nrOut.includes(query));
+
+  document.getElementById('edr-trains-tbody').innerHTML = rows.map(t => `
+    <tr class="${t.rowClass}">
+      <td class="check-cell">✓</td>
+      <td class="check-cell">${t.nk ? '□' : ''}</td>
+      <td>${t.arrPlan}</td>
+      <td class="${t.arrDelay ? 'delay-cell' : ''}">${t.arrDelay || '0'}</td>
+      <td>${t.arrReal}</td>
+      <td>${t.kind}</td>
+      <td class="dir-in">${t.fromPost}</td>
+      <td class="nr-in ${t.hot ? 'number-hot' : ''}">${t.nrIn}</td>
+      <td class="nr-out ${t.hotOut ? 'number-hot' : ''}">${t.nrOut}</td>
+      <td class="dir-out">${t.toPost}</td>
+      <td class="line-cell">${t.line}</td>
+      <td>${t.pzam}</td>
+      <td class="${t.pobl > 0 ? 'delay-cell' : ''}">${t.pobl}</td>
+      <td>${t.type}</td>
+      <td>${t.depPlan}</td>
+      <td class="${t.depDelay ? 'delay-cell' : ''}">${t.depDelay || '0'}</td>
+      <td>${t.depReal}</td>
+      <td>${t.start}</td>
+      <td>${t.end}</td>
+      <td>${t.carrier}</td>
     </tr>
-  `).join('');
+  `).join('') || '<tr><td colspan="20" class="empty-state">Brak pociągów dla podanego numeru.</td></tr>';
+}
+
+function generateStationTrains(dyzurka) {
+  const stationProfiles = {
+    KAT: {
+      posts: ['Chorzów Batory', 'Zawodzie', 'Mysłowice', 'Ligota'],
+      starts: ['Katowice', 'Kraków Gł.', 'Gliwice', 'Bielsko-Biała Gł.', 'Warszawa Wsch.'],
+      ends: ['Gliwice', 'Kraków Gł.', 'Częstochowa', 'Wrocław Gł.', 'Rybnik'],
+      carriers: ['Koleje Śląskie', 'PKP Intercity', 'POLREGIO', 'PKP Cargo'],
+      lines: ['137', '139', '141', '656']
+    },
+    GL: {
+      posts: ['Zabrze', 'Katowice', 'Kędzierzyn-Koźle', 'Łabędy'],
+      starts: ['Gliwice', 'Katowice', 'Opole Gł.', 'Wrocław Gł.', 'Rybnik'],
+      ends: ['Katowice', 'Wrocław Gł.', 'Kędzierzyn-Koźle', 'Częstochowa', 'Kraków Gł.'],
+      carriers: ['Koleje Śląskie', 'PKP Intercity', 'POLREGIO', 'DB Cargo Polska'],
+      lines: ['135', '137', '141', '147']
+    },
+    CHB: {
+      posts: ['Katowice', 'Chorzów Miasto', 'Świętochłowice', 'Bytom'],
+      starts: ['Katowice', 'Bytom', 'Tarnowskie Góry', 'Gliwice', 'Lubliniec'],
+      ends: ['Gliwice', 'Katowice', 'Bytom', 'Tarnowskie Góry', 'Częstochowa'],
+      carriers: ['Koleje Śląskie', 'POLREGIO', 'PKP Cargo', 'CTL Logistics'],
+      lines: ['131', '137', '141', '651']
+    },
+    KTZ: {
+      posts: ['Katowice', 'Katowice Szopienice Płd.', 'Mysłowice', 'Sosnowiec Gł.'],
+      starts: ['Katowice', 'Mysłowice', 'Sosnowiec Gł.', 'Kraków Gł.', 'Oświęcim'],
+      ends: ['Sosnowiec Gł.', 'Katowice', 'Mysłowice', 'Kraków Gł.', 'Zawiercie'],
+      carriers: ['Koleje Śląskie', 'POLREGIO', 'PKP Cargo', 'Orlen Kolej'],
+      lines: ['134', '138', '139', '660']
+    },
+    SOG: {
+      posts: ['Katowice', 'Będzin', 'Dąbrowa Górnicza', 'Mysłowice'],
+      starts: ['Sosnowiec Gł.', 'Katowice', 'Zawiercie', 'Częstochowa', 'Kraków Gł.'],
+      ends: ['Katowice', 'Zawiercie', 'Dąbrowa Górnicza', 'Kielce', 'Gliwice'],
+      carriers: ['Koleje Śląskie', 'PKP Intercity', 'POLREGIO', 'PKP Cargo'],
+      lines: ['1', '62', '133', '160']
+    }
+  };
+
+  const profile = stationProfiles[dyzurka.code] || {
+    posts: ['Posterunek A', 'Posterunek B', 'Stacja sąsiednia', dyzurka.name],
+    starts: [dyzurka.name, 'Katowice', 'Gliwice', 'Kraków Gł.'],
+    ends: ['Katowice', 'Gliwice', 'Kraków Gł.', dyzurka.name],
+    carriers: ['Koleje Śląskie', 'POLREGIO', 'PKP Cargo'],
+    lines: [dyzurka.line || '000']
+  };
+
+  const kinds = ['APM', 'TMS', 'TCE', 'TLS', 'TKS', 'ROJ'];
+  const now = new Date();
+  const start = new Date(now);
+  start.setMinutes(now.getMinutes() - 64);
+  const seed = String(dyzurka.code || dyzurka.id).split('').reduce((sum, ch) => sum + ch.charCodeAt(0), 0);
+
+  return Array.from({ length: 22 }, (_, i) => {
+    const time = new Date(start.getTime() + i * 13 * 60000);
+    const dep = new Date(time.getTime() + ((i % 4) + 1) * 60000);
+    const delay = [0, 0, 0, 3, 7, 12, 0, 0, 21][(i + seed) % 9];
+    const passing = (i + seed) % 8 === 0;
+    const selected = i === 10;
+    const freight = (i + seed) % 5 === 0;
+    const nrBase = freight ? 240000 + seed * 13 + i * 17 : 41000 + seed * 7 + i * 19;
+    const fromPost = profile.posts[(i + seed) % profile.posts.length];
+    const toPost = profile.posts[(i + seed + 1) % profile.posts.length];
+
+    return {
+      nk: (i + seed) % 17 === 0,
+      arrPlan: passing ? '' : fmtTrainTime(time),
+      arrDelay: passing ? '' : delay,
+      arrReal: passing ? '' : fmtTrainTime(addMinutes(time, delay)),
+      kind: freight ? kinds[(i + 1) % kinds.length] : kinds[i % kinds.length],
+      fromPost: passing ? '-------' : fromPost,
+      nrIn: String(nrBase),
+      nrOut: passing ? '-----' : String(nrBase + ((i % 3) * 2)),
+      toPost,
+      line: profile.lines[(i + seed) % profile.lines.length],
+      pzam: passing ? '0,0' : ['0,0', '12,0', '21,0', '32,0'][(i + seed) % 4],
+      pobl: delay,
+      type: freight ? 'T' : '',
+      depPlan: fmtTrainTime(dep),
+      depDelay: delay,
+      depReal: fmtTrainTime(addMinutes(dep, delay)),
+      start: profile.starts[(i + seed + 2) % profile.starts.length],
+      end: profile.ends[(i + seed + 3) % profile.ends.length],
+      carrier: profile.carriers[(i + seed) % profile.carriers.length],
+      rowClass: selected ? 'row-selected' : (passing ? 'row-passing' : (delay >= 10 ? 'row-warning' : '')),
+      hot: (i + seed) % 6 === 0,
+      hotOut: (i + seed) % 7 === 0
+    };
+  });
+}
+
+function addMinutes(date, minutes) {
+  return new Date(date.getTime() + minutes * 60000);
+}
+
+function fmtTrainTime(date) {
+  const day = ['Nd','Pn','Wt','ŚR','Cz','Pt','So'][date.getDay()];
+  return `${day} ${String(date.getHours()).padStart(2,'0')}:${String(date.getMinutes()).padStart(2,'0')}`;
 }
 
 function renderDziennik(dyzurkaId) {
