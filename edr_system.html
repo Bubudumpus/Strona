@@ -1086,7 +1086,7 @@ function navigate(path, params = {}) {
     const dyzurki = DB.get('dyzurki');
     const dyzurka = dyzurki.find(d => d.id === dyzurkaId);
     if (!dyzurka) { showToast('Dyżurka nie istnieje', 'error'); return; }
-    if (!dyzurka.is_active) { showToast('Dyżurka jest nieaktywna', 'error'); return; }
+    if (!dyzurka.is_active && user.role !== 'admin') { showToast('Dyżurka jest nieaktywna', 'error'); return; }
 
     currentDyzurka = dyzurka;
     currentUser = user;
@@ -1317,6 +1317,7 @@ function renderAdminDyzurki() {
           : '<span class="badge badge-red">Nieaktywna</span>'}
       </td>
       <td>
+        <button class="btn btn-sm" onclick="navigate('/dyzurka', {id: ${d.id}})">Wejdź</button>
         <button class="btn btn-sm btn-danger" onclick="toggleDyzurka(${d.id})">${d.is_active ? 'Dezaktywuj' : 'Aktywuj'}</button>
       </td>
     </tr>
@@ -1447,15 +1448,19 @@ function renderDashboard() {
   const user = getSession();
   document.getElementById('dashboard-greeting').textContent = user ? user.fullname || user.login : '—';
 
-  const userDyzurki = DB.get('user_dyzurki').filter(ud => ud.user_id === user.id);
   const dyzurki = DB.get('dyzurki').filter(d => d.is_active);
-  const myDyzurki = dyzurki.filter(d => userDyzurki.some(ud => ud.dyzurka_id === d.id));
+  const userDyzurki = DB.get('user_dyzurki').filter(ud => ud.user_id === user.id);
+  const myDyzurki = user.role === 'admin'
+    ? dyzurki
+    : dyzurki.filter(d => userDyzurki.some(ud => ud.dyzurka_id === d.id));
 
   document.getElementById('dashboard-count').textContent = myDyzurki.length;
 
   const grid = document.getElementById('dashboard-dyzurki-grid');
   if (!myDyzurki.length) {
-    grid.innerHTML = '<div class="empty-state">Brak przypisanych dyżurek.<br>Skontaktuj się z administratorem.</div>';
+    grid.innerHTML = user.role === 'admin'
+      ? '<div class="empty-state">Brak aktywnych dyżurek.</div>'
+      : '<div class="empty-state">Brak przypisanych dyżurek.<br>Skontaktuj się z administratorem.</div>';
     return;
   }
 
