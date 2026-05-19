@@ -1125,6 +1125,314 @@
   ::-webkit-scrollbar-track { background: var(--bg); }
   ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
 
+  /* ─── ROLE SWITCH BAR (admin w EDR) ─── */
+  .role-switch-bar {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+    padding: 3px 6px;
+    background: rgba(0,0,0,0.25);
+    border-radius: var(--radius);
+  }
+  .role-btn {
+    padding: 3px 10px;
+    border: 1px solid rgba(255,255,255,0.2);
+    background: transparent;
+    color: rgba(255,255,255,0.75);
+    font-family: inherit;
+    font-size: 11px;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all 0.15s;
+    letter-spacing: 0.05em;
+  }
+  .role-btn:hover { background: rgba(255,255,255,0.15); color: #fff; }
+  .role-btn.active { background: rgba(255,255,255,0.25); color: #fff; border-color: rgba(255,255,255,0.5); }
+  body.is-authenticated .role-switch-bar {
+    background: #d8d5cd;
+    border: 2px solid;
+    border-color: #fff #777 #777 #fff;
+    border-radius: 0;
+    padding: 2px 4px;
+  }
+  body.is-authenticated .role-btn {
+    background: #d8d5cd;
+    color: #111;
+    border: 2px solid;
+    border-color: #fff #777 #777 #fff;
+    border-radius: 0;
+    font-size: 11px;
+    padding: 2px 8px;
+  }
+  body.is-authenticated .role-btn:hover { background: #ece9df; }
+  body.is-authenticated .role-btn.active { background: #0b3f7a; color: #fff; }
+
+  /* ─── EDR TAB PANELS ─── */
+  .edr-tab-panel { display: none; }
+  .edr-tab-panel.active { display: block; }
+
+  /* ─── TRAIN DETAIL TAB ─── */
+  .train-detail-empty {
+    text-align: center;
+    padding: 32px;
+    color: var(--text3);
+    font-size: 12px;
+    line-height: 1.8;
+  }
+  body.is-authenticated .train-detail-empty { color: #555; background: #fffde8; padding: 16px; }
+  .train-detail-wrap {
+    padding: 8px 0;
+  }
+  .train-detail-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 10px 12px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    margin-bottom: 12px;
+  }
+  body.is-authenticated .train-detail-header {
+    background: linear-gradient(90deg, #0b3f7a, #6aa3d8);
+    color: #fff;
+    border-radius: 0;
+    border: none;
+    padding: 4px 8px;
+    margin-bottom: 6px;
+  }
+  .train-detail-number {
+    font-size: 24px;
+    font-weight: 700;
+    font-family: 'Courier New', monospace;
+    color: var(--accent);
+    letter-spacing: 0.1em;
+  }
+  body.is-authenticated .train-detail-number { color: #fff; font-size: 18px; letter-spacing: 0; }
+  .train-detail-cat {
+    font-size: 12px;
+    color: var(--text2);
+    background: var(--accent-soft);
+    border: 1px solid var(--accent-border);
+    border-radius: 20px;
+    padding: 2px 10px;
+  }
+  body.is-authenticated .train-detail-cat { background: rgba(255,255,255,0.2); border-color: rgba(255,255,255,0.4); color: #fff; border-radius: 0; }
+  .train-detail-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+  .train-detail-item {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 7px 10px;
+  }
+  body.is-authenticated .train-detail-item { background: #fffde8; border: 1px solid #b8b4a8; border-radius: 0; padding: 3px 6px; }
+  .train-detail-label { font-size: 10px; letter-spacing: 0.12em; color: var(--text3); text-transform: uppercase; margin-bottom: 2px; }
+  body.is-authenticated .train-detail-label { color: #555; letter-spacing: 0; text-transform: none; font-size: 11px; }
+  .train-detail-value { font-size: 13px; color: var(--text); font-weight: 600; }
+  body.is-authenticated .train-detail-value { font-size: 12px; color: #111; }
+  .train-detail-route {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 8px 12px;
+    margin-bottom: 10px;
+    font-size: 12px;
+    color: var(--text2);
+    line-height: 2;
+  }
+  body.is-authenticated .train-detail-route { background: #fffde8; border: 1px solid #b8b4a8; border-radius: 0; padding: 4px 8px; color: #111; }
+  .route-stop {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .route-stop-code {
+    color: var(--accent);
+    font-weight: 700;
+    font-family: 'Courier New', monospace;
+  }
+  body.is-authenticated .route-stop-code { color: #0b3f7a; }
+  .route-arrow { color: var(--text3); margin: 0 2px; }
+  .ph-badge {
+    font-size: 9px;
+    background: rgba(245,158,11,0.2);
+    color: var(--amber);
+    border: 1px solid rgba(245,158,11,0.4);
+    border-radius: 3px;
+    padding: 0 4px;
+    vertical-align: middle;
+  }
+  body.is-authenticated .ph-badge { background: #f4e79f; color: #3f3200; border-color: #9a8b34; }
+  .train-detail-danger {
+    background: rgba(239,68,68,0.1);
+    border: 1px solid rgba(239,68,68,0.3);
+    border-radius: var(--radius);
+    padding: 8px 12px;
+    font-size: 12px;
+    color: #fca5a5;
+    margin-bottom: 10px;
+  }
+  body.is-authenticated .train-detail-danger { background: #f0c5c5; color: #670000; border-color: #a24a4a; border-radius: 0; }
+  .train-detail-notes {
+    font-size: 12px;
+    color: var(--text2);
+    line-height: 1.6;
+    border-top: 1px solid var(--border);
+    padding-top: 8px;
+    margin-top: 4px;
+  }
+  body.is-authenticated .train-detail-notes { color: #333; border-color: #b8b4a8; font-size: 11px; }
+
+  /* ─── MULTI EDR PAGE ─── */
+  #page-multi-edr .page-inner { max-width: none; }
+  .multi-edr-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  body.is-authenticated .multi-edr-grid { gap: 6px; }
+  .multi-edr-station {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius2);
+    overflow: hidden;
+  }
+  body.is-authenticated .multi-edr-station {
+    background: #d8d5cd;
+    border: 2px solid;
+    border-color: #fff #777 #777 #fff;
+    border-radius: 0;
+  }
+  .multi-edr-station-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 14px;
+    background: var(--surface2);
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    user-select: none;
+  }
+  body.is-authenticated .multi-edr-station-header {
+    background: linear-gradient(90deg, #0b3f7a, #6aa3d8);
+    color: #fff;
+    border-bottom: 1px solid #555;
+    padding: 3px 8px;
+  }
+  .multi-edr-station-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .multi-edr-code {
+    font-size: 16px;
+    font-weight: 700;
+    font-family: 'Courier New', monospace;
+    color: var(--accent);
+    letter-spacing: 0.08em;
+  }
+  body.is-authenticated .multi-edr-code { color: #fff; font-size: 14px; letter-spacing: 0; }
+  .multi-edr-name { font-size: 13px; color: var(--text); }
+  body.is-authenticated .multi-edr-name { color: #fff; font-size: 12px; }
+  .multi-edr-collapse-btn {
+    font-size: 11px;
+    color: var(--text3);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 2px 6px;
+    transition: color 0.15s;
+  }
+  body.is-authenticated .multi-edr-collapse-btn { color: rgba(255,255,255,0.8); }
+  .multi-edr-body {
+    overflow: hidden;
+    transition: max-height 0.25s ease;
+  }
+  .multi-edr-body.collapsed { max-height: 0 !important; }
+  .multi-edr-table-wrap {
+    overflow: auto;
+    max-height: 280px;
+    border-top: 1px solid var(--border);
+  }
+  body.is-authenticated .multi-edr-table-wrap {
+    border-color: #777;
+    background: #fffde8;
+  }
+
+  /* ─── STATION PICKER (formularz maszynisty) ─── */
+  .station-picker-row {
+    display: flex;
+    gap: 8px;
+    align-items: flex-end;
+    margin-bottom: 8px;
+  }
+  .station-picker-row .form-group { margin-bottom: 0; flex: 1; }
+  .added-stations-list {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    max-height: 220px;
+    overflow-y: auto;
+    padding: 2px;
+  }
+  body.is-authenticated .added-stations-list {
+    background: #fffde8;
+    border: 2px solid;
+    border-color: #777 #fff #fff #777;
+    padding: 4px;
+    max-height: 180px;
+  }
+  .added-station-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 10px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+  }
+  body.is-authenticated .added-station-item {
+    background: #f4f1da;
+    border: 1px solid #b8b4a8;
+    border-radius: 0;
+    padding: 2px 6px;
+  }
+  .added-station-code {
+    font-weight: 700;
+    color: var(--accent);
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    min-width: 40px;
+  }
+  body.is-authenticated .added-station-code { color: #0b3f7a; }
+  .added-station-name { font-size: 12px; color: var(--text2); flex: 1; }
+  body.is-authenticated .added-station-name { color: #111; font-size: 11px; }
+  .added-station-ph-label { font-size: 11px; color: var(--text3); display: flex; align-items: center; gap: 4px; white-space: nowrap; }
+  body.is-authenticated .added-station-ph-label { color: #333; }
+  .added-station-remove {
+    background: transparent;
+    border: none;
+    color: var(--red);
+    cursor: pointer;
+    font-size: 14px;
+    line-height: 1;
+    padding: 0 4px;
+    transition: opacity 0.15s;
+  }
+  .added-station-remove:hover { opacity: 0.7; }
+  .added-stations-empty {
+    text-align: center;
+    color: var(--text3);
+    font-size: 12px;
+    padding: 12px;
+  }
+  body.is-authenticated .added-stations-empty { color: #555; }
+
   /* ─── CONTEXT MENU ─── */
   #ctx-menu {
     position: fixed;
@@ -1272,7 +1580,10 @@
   <div class="page-inner">
     <div class="page-header">
       <div class="page-title">Panel Administracyjny<span id="admin-greeting">—</span></div>
-      <button class="btn" onclick="navigate('/driver')">Zaloguj jako maszynista</button>
+      <div style="display:flex;gap:8px;align-items:center">
+        <button class="btn" onclick="adminViewAsDyzurny()">Widok Dyżurnego</button>
+        <button class="btn" onclick="navigate('/driver')">Maszynista</button>
+      </div>
     </div>
 
     <!-- TABS -->
@@ -1384,12 +1695,30 @@
         <div style="font-size:11px;color:var(--text3);text-align:right">
           Dostęp do <span id="dashboard-count" class="text-accent">—</span> posterunków
         </div>
+        <button class="btn" id="btn-admin-view" style="display:none" onclick="navigate('/admin')">Panel Administratora</button>
         <button class="btn" onclick="navigate('/driver')">Zaloguj jako maszynista</button>
       </div>
     </div>
     <div id="dashboard-dyzurki-grid" class="dyzurka-grid">
       <div class="empty-state">Ładowanie...</div>
     </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════
+     PAGE: MULTI-EDR — WIELE DYŻUREK NARAZ
+════════════════════════════════════════════════ -->
+<div id="page-multi-edr" class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-title">Pulpit Dyżurnego<span id="multi-edr-greeting">—</span></div>
+      <div style="display:flex;gap:10px;align-items:center">
+        <div style="font-size:11px;color:var(--text3)">Widok wielodyżurkowy</div>
+        <button class="btn" id="btn-multi-admin" style="display:none" onclick="navigate('/admin')">Panel Administratora</button>
+        <button class="btn" onclick="navigate('/driver')">Maszynista</button>
+      </div>
+    </div>
+    <div id="multi-edr-grid" class="multi-edr-grid"></div>
   </div>
 </div>
 
@@ -1437,8 +1766,18 @@
         </div>
 
         <div class="form-group">
-          <label class="form-label">Stacje pośrednie / postój handlowy PH</label>
-          <div class="station-pick-list" id="driver-mid-stations"></div>
+          <label class="form-label">Stacje pośrednie</label>
+          <div class="station-picker-row">
+            <div class="form-group">
+              <select class="form-select" id="driver-mid-select">
+                <option value="">— wybierz stację —</option>
+              </select>
+            </div>
+            <button class="btn" style="white-space:nowrap;flex:none" onclick="addDriverMidStation()">+ Dodaj stację</button>
+          </div>
+          <div class="added-stations-list" id="driver-mid-stations">
+            <div class="added-stations-empty">Brak stacji pośrednich</div>
+          </div>
         </div>
 
         <div class="form-row">
@@ -1501,7 +1840,12 @@
       <div class="edr-clock" id="edr-clock">00:00:00 <span class="blink">_</span></div>
       <div class="edr-date" id="edr-date">—</div>
     </div>
-    <div style="display:flex;gap:10px;align-items:center">
+    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+      <div class="role-switch-bar" id="edr-role-bar" style="display:none">
+        <button class="role-btn" onclick="navigate('/driver')">Maszynista</button>
+        <button class="role-btn active">Dyżurny Ruchu</button>
+        <button class="role-btn" onclick="navigate('/admin')">Administrator</button>
+      </div>
       <button class="btn" onclick="goBack()">← Wróć</button>
     </div>
   </div>
@@ -1516,8 +1860,8 @@
             <span>Pomoc</span>
           </div>
           <div class="edr-tabs-row">
-            <button class="edr-tab active">Wykaz pociągów</button>
-            <button class="edr-tab">Rozkład jazdy</button>
+            <button class="edr-tab active" id="edr-tab-trains" onclick="switchEdrTab('trains')">Wykaz pociągów</button>
+            <button class="edr-tab" id="edr-tab-info" onclick="switchEdrTab('info')">Opis pociągu</button>
           </div>
           <div class="edr-filters">
             <div>
@@ -1546,6 +1890,8 @@
           </div>
         </div>
 
+        <!-- TAB: WYKAZ POCIĄGÓW -->
+        <div class="edr-tab-panel active" id="edr-panel-trains">
         <div class="card">
           <div class="card-title">Wykaz pociągów — stan bieżący</div>
           <div class="edr-table-wrap">
@@ -1563,7 +1909,7 @@
               <tbody id="edr-trains-tbody"></tbody>
             </table>
           </div>
-          <div class="edr-legend">
+          <div class="edr-legend" id="edr-legend-main">
             <span><b class="lg lg-k"></b> Kursuje</span>
             <span><b class="lg lg-nk"></b> Nie kursuje</span>
             <span><b class="lg lg-delay"></b> Opóźnienie</span>
@@ -1573,8 +1919,18 @@
             <span><b class="lg lg-stop"></b> Przejazd poc. bez zatrzymania</span>
           </div>
         </div>
-      </div>
+        </div><!-- /edr-panel-trains -->
 
+        <!-- TAB: OPIS POCIĄGU -->
+        <div class="edr-tab-panel" id="edr-panel-info">
+        <div class="card">
+          <div class="card-title">Opis pociągu</div>
+          <div id="edr-train-detail-content">
+            <div class="train-detail-empty">Kliknij wiersz w tabeli pociągów, aby zobaczyć szczegóły składu.</div>
+          </div>
+        </div>
+        </div><!-- /edr-panel-info -->
+      </div>
 
     </div>
   </div>
@@ -1850,6 +2206,13 @@ function navigate(path, params = {}) {
     currentUser = user;
     showPage('driver');
     renderDriverForm();
+    return;
+  }
+
+  if (path === '/multi-edr') {
+    currentUser = user;
+    showPage('multi-edr');
+    renderMultiEDR(params.dyzurki || []);
     return;
   }
 
@@ -2239,6 +2602,10 @@ function renderDashboard() {
   const user = getSession();
   document.getElementById('dashboard-greeting').textContent = user ? user.fullname || user.login : '—';
 
+  // Pokaż przycisk admina jeśli użytkownik jest administratorem
+  const btnAdmin = document.getElementById('btn-admin-view');
+  if (btnAdmin) btnAdmin.style.display = user?.role === 'admin' ? '' : 'none';
+
   const dyzurki = DB.get('dyzurki').filter(d => d.is_active);
   const userDyzurki = DB.get('user_dyzurki').filter(ud => ud.user_id === user.id);
   const myDyzurki = user.role === 'admin'
@@ -2252,6 +2619,12 @@ function renderDashboard() {
     grid.innerHTML = user.role === 'admin'
       ? '<div class="empty-state">Brak aktywnych dyżurek.</div>'
       : '<div class="empty-state">Brak przypisanych dyżurek.<br>Skontaktuj się z administratorem.</div>';
+    return;
+  }
+
+  // Jeśli więcej niż 1 dyżurka → przejdź do widoku wielodyżurkowego
+  if (myDyzurki.length > 1) {
+    navigate('/multi-edr', { dyzurki: myDyzurki });
     return;
   }
 
@@ -2269,8 +2642,95 @@ function renderDashboard() {
 }
 
 /* ═══════════════════════════════════════════════════════════════
+   MULTI-EDR — WIELE DYŻUREK NA JEDNEJ STRONIE
+═══════════════════════════════════════════════════════════════ */
+function renderMultiEDR(dyzurki) {
+  const user = getSession();
+  document.getElementById('multi-edr-greeting').textContent = user ? user.fullname || user.login : '—';
+  const btnAdmin = document.getElementById('btn-multi-admin');
+  if (btnAdmin) btnAdmin.style.display = user?.role === 'admin' ? '' : 'none';
+
+  const stationMap = getStationMap();
+  const grid = document.getElementById('multi-edr-grid');
+
+  grid.innerHTML = dyzurki.map(d => {
+    const trains = DB.get('trains').filter(t => t.route?.some(r => r.stationId === d.id));
+    const rows = trains.map((t, idx) => buildStoredTrainRow(t, d, stationMap, idx));
+
+    const tableRows = rows.map(t => `
+      <tr class="${t.rowClass}" data-train-id="${t.trainId}" data-dyzurka-id="${d.id}"
+          onclick="multiEdrSelectRow(event, '${t.trainId}', '${d.id}')"
+          oncontextmenu="showCtxMenu(event, '${t.trainId}', '${d.id}')">
+        <td class="check-cell">✓</td>
+        <td class="check-cell"></td>
+        <td id="arr-plan-${t.trainId}-${d.id}">${t.arrPlan}</td>
+        <td>${t.delay}</td>
+        <td id="arr-real-${t.trainId}-${d.id}" class="${t.arrConfirmed ? 'time-confirmed' : ''}">${t.arrReal}</td>
+        <td>${t.category}</td>
+        <td class="nr-in number-hot">${t.number}</td>
+        <td>${t.driver}</td>
+        <td class="dir-in">${t.from}</td>
+        <td>${t.through}</td>
+        <td class="dir-out">${t.to}</td>
+        <td>${t.stop}</td>
+        <td id="dep-plan-${t.trainId}-${d.id}">${t.depPlan}</td>
+        <td>${t.delay}</td>
+        <td id="dep-real-${t.trainId}-${d.id}" class="${t.depConfirmed ? 'time-confirmed' : ''}">${t.depReal}</td>
+        <td><span class="relation-link" onclick="event.stopPropagation();openTrainInfo('${t.trainId}')">${t.relation}${t.dangerous ? ' ⚠ TN' : ''}</span></td>
+      </tr>
+    `).join('') || `<tr><td colspan="16" class="empty-state">Brak składów dla tej dyżurki.</td></tr>`;
+
+    return `
+      <div class="multi-edr-station">
+        <div class="multi-edr-station-header" onclick="toggleMultiEdrPanel(this)">
+          <div class="multi-edr-station-title">
+            <span class="multi-edr-code">${d.code}</span>
+            <span class="multi-edr-name">${d.name}</span>
+            <span class="badge badge-gray" style="font-size:10px">${typeLabel(d.type)}</span>
+            <span style="font-size:11px;color:var(--text3)">Linia ${d.line || '?'} · km ${d.km || '?'} · ${trains.length} pociągów</span>
+          </div>
+          <button class="multi-edr-collapse-btn">▼</button>
+        </div>
+        <div class="multi-edr-body" style="max-height:320px">
+          <div class="multi-edr-table-wrap">
+            <table class="dziennik-table edr-timetable">
+              <thead><tr>
+                <th>K</th><th>NK</th>
+                <th>Przyj.<br>plan.</th><th>+/-</th><th>Przyj.<br>rzecz.</th>
+                <th>Rodz.</th><th>Numer</th><th>Maszynista</th>
+                <th>Ze scenerii</th><th>Przez</th><th>Do scenerii</th><th>Postój</th>
+                <th>Odj.<br>plan.</th><th>+/-</th><th>Odj.<br>rzecz.</th>
+                <th>Relacja</th>
+              </tr></thead>
+              <tbody>${tableRows}</tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function toggleMultiEdrPanel(headerEl) {
+  const body = headerEl.nextElementSibling;
+  const btn = headerEl.querySelector('.multi-edr-collapse-btn');
+  const collapsed = body.classList.toggle('collapsed');
+  btn.textContent = collapsed ? '►' : '▼';
+}
+
+function multiEdrSelectRow(event, trainId, dyzurkaId) {
+  // Usuń zaznaczenie z innych wierszy
+  document.querySelectorAll('[data-train-id].row-selected').forEach(r => r.classList.remove('row-selected'));
+  const tr = event.currentTarget;
+  tr.classList.add('row-selected');
+  openTrainInfo(trainId);
+}
+
+/* ═══════════════════════════════════════════════════════════════
    MASZYNISTA — FORMULARZ SKŁADU
 ═══════════════════════════════════════════════════════════════ */
+let driverMidRoute = []; // { stationId, ph }
+
 function renderDriverForm() {
   const user = getSession();
   document.getElementById('driver-greeting').textContent = user ? user.fullname || user.login : 'Nowy skład';
@@ -2283,18 +2743,61 @@ function renderDriverForm() {
   document.getElementById('driver-start-station').innerHTML = '<option value="">— wybierz —</option>' + stationOptions;
   document.getElementById('driver-end-station').innerHTML = '<option value="">— wybierz —</option>' + stationOptions;
 
-  driverRouteState = stations.map(s => ({ stationId: s.id, ph: false }));
-  document.getElementById('driver-mid-stations').innerHTML = stations.map(s => `
-    <label class="station-pick-item">
-      <input type="checkbox" class="driver-mid-station" value="${s.id}">
-      <span><span class="station-code">${s.code}</span> ${s.name}</span>
-      <span>PH</span>
-      <input type="checkbox" class="driver-mid-ph" data-station-id="${s.id}">
-    </label>
-  `).join('') || '<div class="empty-state">Brak aktywnych stacji do wyboru.</div>';
+  // Picker stacji pośrednich
+  document.getElementById('driver-mid-select').innerHTML =
+    '<option value="">— wybierz stację —</option>' +
+    stations.map(s => `<option value="${s.id}">${s.name} (${s.code})</option>`).join('');
+
+  driverMidRoute = [];
+  renderDriverMidStations();
 
   renderDriverCreatedTrains();
   toggleDangerDetails();
+}
+
+function renderDriverMidStations() {
+  const container = document.getElementById('driver-mid-stations');
+  if (!container) return;
+  if (!driverMidRoute.length) {
+    container.innerHTML = '<div class="added-stations-empty">Brak stacji pośrednich</div>';
+    return;
+  }
+  const stationMap = getStationMap();
+  container.innerHTML = driverMidRoute.map((item, idx) => {
+    const s = stationMap.get(item.stationId);
+    if (!s) return '';
+    return `
+      <div class="added-station-item">
+        <span class="added-station-code">${s.code}</span>
+        <span class="added-station-name">${s.name}</span>
+        <label class="added-station-ph-label">
+          <input type="checkbox" ${item.ph ? 'checked' : ''} onchange="toggleDriverMidPh(${idx}, this.checked)"> PH
+        </label>
+        <button class="added-station-remove" onclick="removeDriverMidStation(${idx})" title="Usuń">×</button>
+      </div>
+    `;
+  }).join('');
+}
+
+function addDriverMidStation() {
+  const sel = document.getElementById('driver-mid-select');
+  const stationId = parseInt(sel.value);
+  if (!stationId) { showToast('Wybierz stację z listy', 'error'); return; }
+  if (driverMidRoute.some(r => r.stationId === stationId)) {
+    showToast('Ta stacja jest już na liście', 'error'); return;
+  }
+  driverMidRoute.push({ stationId, ph: false });
+  sel.value = '';
+  renderDriverMidStations();
+}
+
+function removeDriverMidStation(idx) {
+  driverMidRoute.splice(idx, 1);
+  renderDriverMidStations();
+}
+
+function toggleDriverMidPh(idx, val) {
+  if (driverMidRoute[idx]) driverMidRoute[idx].ph = val;
 }
 
 function toggleDangerDetails() {
@@ -2311,7 +2814,8 @@ function clearDriverForm() {
   document.getElementById('driver-start-station').value = '';
   document.getElementById('driver-end-station').value = '';
   document.getElementById('driver-dangerous').value = 'nie';
-  document.querySelectorAll('.driver-mid-station,.driver-mid-ph').forEach(el => { el.checked = false; });
+  driverMidRoute = [];
+  renderDriverMidStations();
   toggleDangerDetails();
 }
 
@@ -2334,13 +2838,8 @@ function saveDriverTrain() {
   if (!mass || !length) { showToast('Podaj masę i długość składu', 'error'); return; }
   if (dangerous && !dangerousDetails) { showToast('Wpisz jakie towary niebezpieczne przewozi skład', 'error'); return; }
 
-  const midStations = Array.from(document.querySelectorAll('.driver-mid-station:checked'))
-    .map(el => parseInt(el.value))
-    .filter(id => id !== startId && id !== endId)
-    .map(id => ({
-      stationId: id,
-      ph: !!document.querySelector(`.driver-mid-ph[data-station-id="${id}"]`)?.checked
-    }));
+  const midStations = driverMidRoute
+    .filter(r => r.stationId !== startId && r.stationId !== endId);
 
   const route = [
     { stationId: startId, ph: true },
@@ -2411,6 +2910,16 @@ function renderEDR(dyzurka) {
   document.getElementById('edr-meta').textContent =
     `${typeLabel(dyzurka.type)} · Linia nr ${dyzurka.line || '?'} · km ${dyzurka.km || '?'}`;
 
+  // Pokaż przyciski ról jeśli admin
+  const roleBar = document.getElementById('edr-role-bar');
+  if (roleBar) roleBar.style.display = currentUser?.role === 'admin' ? 'flex' : 'none';
+
+  // Reset zakładek
+  switchEdrTab('trains');
+  selectedTrainId = null;
+  const detailEl = document.getElementById('edr-train-detail-content');
+  if (detailEl) detailEl.innerHTML = '<div class="train-detail-empty">Kliknij wiersz w tabeli pociągów, aby zobaczyć szczegóły składu.</div>';
+
   // Zegar
   if (clockInterval) clearInterval(clockInterval);
   const updateClock = () => {
@@ -2463,7 +2972,9 @@ function renderTrains(dyzurka) {
     .filter(t => !query || t.number.includes(query) || t.relation.toLowerCase().includes(query.toLowerCase()));
 
   document.getElementById('edr-trains-tbody').innerHTML = rows.map(t => `
-    <tr class="${t.rowClass}" data-train-id="${t.trainId}" oncontextmenu="showCtxMenu(event, '${t.trainId}', '${dyzurka.id}')">
+    <tr class="${t.rowClass}" data-train-id="${t.trainId}" data-dyzurka-id="${dyzurka.id}"
+        onclick="selectTrainRow(event, '${t.trainId}', '${dyzurka.id}')"
+        oncontextmenu="showCtxMenu(event, '${t.trainId}', '${dyzurka.id}')">
       <td class="check-cell">✓</td>
       <td class="check-cell"></td>
       <td id="arr-plan-${t.trainId}-${dyzurka.id}">${t.arrPlan}</td>
@@ -2479,9 +2990,104 @@ function renderTrains(dyzurka) {
       <td id="dep-plan-${t.trainId}-${dyzurka.id}">${t.depPlan}</td>
       <td>${t.delay}</td>
       <td id="dep-real-${t.trainId}-${dyzurka.id}" class="${t.depConfirmed ? 'time-confirmed' : ''}">${t.depReal}</td>
-      <td><span class="relation-link" onclick="openTrainInfo('${t.trainId}')">${t.relation}${t.dangerous ? ' ⚠ TN' : ''}</span></td>
+      <td><span class="relation-link" onclick="event.stopPropagation();openTrainInfo('${t.trainId}')">${t.relation}${t.dangerous ? ' ⚠ TN' : ''}</span></td>
     </tr>
   `).join('') || '<tr><td colspan="16" class="empty-state">Brak zgłoszonych składów dla tej dyżurki.</td></tr>';
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   PRZEŁĄCZANIE ZAKŁADEK + ZAZNACZANIE WIERSZY
+═══════════════════════════════════════════════════════════════ */
+function switchEdrTab(tab) {
+  ['trains','info'].forEach(t => {
+    document.getElementById('edr-panel-' + t)?.classList.toggle('active', t === tab);
+    document.getElementById('edr-tab-' + t)?.classList.toggle('active', t === tab);
+  });
+}
+
+let selectedTrainId = null;
+
+function selectTrainRow(event, trainId, dyzurkaId) {
+  // Usuń zaznaczenie z poprzednich
+  document.querySelectorAll('[data-train-id].row-selected').forEach(r => r.classList.remove('row-selected'));
+  // Zaznacz kliknięty
+  const tr = event.currentTarget;
+  tr.classList.add('row-selected');
+  selectedTrainId = trainId;
+  // Renderuj dane w zakładce Opis pociągu
+  renderTrainDetailTab(trainId, dyzurkaId);
+}
+
+function renderTrainDetailTab(trainId, dyzurkaId) {
+  const trains = DB.get('trains');
+  const train = trains.find(t => String(t.id) === String(trainId));
+  if (!train) return;
+
+  const stationMap = getStationMap();
+  const first = stationMap.get(train.route[0]?.stationId);
+  const last = stationMap.get(train.route[train.route.length - 1]?.stationId);
+
+  // Trasa z PH
+  const routeHtml = train.route.map((r, i) => {
+    const s = stationMap.get(r.stationId);
+    if (!s) return '';
+    const arrow = i > 0 ? '<span class="route-arrow">→</span>' : '';
+    const ph = r.ph ? ' <span class="ph-badge">PH</span>' : '';
+    return `${arrow}<span class="route-stop"><span class="route-stop-code">${s.code}</span>${ph}</span>`;
+  }).join(' ');
+
+  const fields = [
+    { label: 'Numer pociągu', value: train.number },
+    { label: 'Kategoria', value: train.category },
+    { label: 'Maszynista', value: train.driver_name || 'Maszynista' },
+    { label: 'Masa brutto', value: train.mass ? `${train.mass} t` : '—' },
+    { label: 'Długość składu', value: train.length ? `${train.length} m` : '—' },
+    { label: 'Stacja początkowa', value: first?.name || '—' },
+    { label: 'Stacja końcowa', value: last?.name || '—' },
+    { label: 'Przystanki', value: String(train.route.length) },
+    { label: 'Towar niebezp.', value: train.dangerous ? 'TAK ⚠' : 'Nie' },
+    { label: 'Utworzono', value: fmtDate(train.created_at) },
+    { label: 'ID składu', value: String(train.id) },
+    { label: 'ID maszynisty', value: String(train.driver_user_id || '—') },
+  ];
+
+  const confKey = dyzurkaId ? `edr_conf_${train.id}_${dyzurkaId}` : null;
+  const conf = confKey ? JSON.parse(localStorage.getItem(confKey) || '{}') : {};
+
+  let html = `<div class="train-detail-wrap">`;
+  html += `<div class="train-detail-header">
+    <span class="train-detail-number">${train.number}</span>
+    <span class="train-detail-cat">${train.category}</span>
+    ${train.dangerous ? '<span style="color:#ef4444;font-weight:700">⚠ TOWARY NIEBEZPIECZNE</span>' : ''}
+  </div>`;
+
+  if (conf.arrReal || conf.depReal) {
+    html += `<div style="padding:6px 10px;background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.3);border-radius:var(--radius);margin-bottom:10px;font-size:12px;color:var(--green)">
+      ✓ Czas zatwierdzony  `;
+    if (conf.arrReal) html += `Przyjazd: <strong>${conf.arrReal}</strong>  `;
+    if (conf.depReal) html += `Odjazd: <strong>${conf.depReal}</strong>`;
+    html += `</div>`;
+  }
+
+  html += `<div class="train-detail-grid">${
+    fields.map(f => `<div class="train-detail-item"><div class="train-detail-label">${f.label}</div><div class="train-detail-value">${f.value}</div></div>`).join('')
+  }</div>`;
+
+  html += `<div class="train-detail-route"><strong>Trasa:</strong><br>${routeHtml}</div>`;
+
+  if (train.dangerous && train.dangerousDetails) {
+    html += `<div class="train-detail-danger">⚠ <strong>Towary niebezpieczne:</strong> ${train.dangerousDetails}</div>`;
+  }
+  if (train.notes) {
+    html += `<div class="train-detail-notes"><strong>Uwagi:</strong> ${train.notes}</div>`;
+  }
+  html += `</div>`;
+
+  const el = document.getElementById('edr-train-detail-content');
+  if (el) el.innerHTML = html;
+
+  // Przełącz na zakładkę Opis pociągu
+  switchEdrTab('info');
 }
 
 function buildStoredTrainRow(train, dyzurka, stationMap, index) {
@@ -2609,35 +3215,45 @@ let ctxDyzurkaId = null;
 
 function showCtxMenu(event, trainId, dyzurkaId) {
   event.preventDefault();
+  event.stopPropagation();
   ctxTrainId = trainId;
   ctxDyzurkaId = dyzurkaId;
 
-  const menu = document.getElementById('ctx-menu');
-  menu.classList.add('visible');
-
-  // Ustaw pozycję menu w obszarze widocznym
-  const x = Math.min(event.clientX, window.innerWidth - menu.offsetWidth - 10);
-  const y = Math.min(event.clientY, window.innerHeight - menu.offsetHeight - 10);
-  menu.style.left = x + 'px';
-  menu.style.top = y + 'px';
-
-  // Sprawdź które opcje są dostępne (czy wiersz ma przyjazd/odjazd)
+  // Sprawdź pozycję pociągu na trasie
   const trains = DB.get('trains');
   const train = trains.find(t => String(t.id) === String(trainId));
   if (!train) return;
-  const stationMap = getStationMap();
   const routeIndex = train.route.findIndex(r => r.stationId === parseInt(dyzurkaId));
   const isFirst = routeIndex === 0;
   const isLast = routeIndex === train.route.length - 1;
 
-  menu.querySelectorAll('.ctx-item')[1].style.opacity = isFirst ? '0.4' : '1';
-  menu.querySelectorAll('.ctx-item')[1].style.pointerEvents = isFirst ? 'none' : '';
-  menu.querySelectorAll('.ctx-item')[2].style.opacity = isLast ? '0.4' : '1';
-  menu.querySelectorAll('.ctx-item')[2].style.pointerEvents = isLast ? 'none' : '';
+  // Buduj menu dynamicznie
+  const menu = document.getElementById('ctx-menu');
+  let items = '';
+  if (!isFirst && !isLast) {
+    // środkowa stacja: wszystkie opcje
+    items += `<div class="ctx-item" onclick="ctxConfirmAll()">Zatwierdź godzinę przejazdu</div>
+              <hr class="ctx-sep">`;
+  }
+  if (!isFirst) {
+    items += `<div class="ctx-item" onclick="ctxConfirmArr()">Zatwierdź godzinę przyjazdu</div>`;
+  }
+  if (!isLast) {
+    items += `<div class="ctx-item" onclick="ctxConfirmDep()">Zatwierdź godzinę odjazdu</div>`;
+  }
+  menu.innerHTML = items;
+
+  menu.classList.add('visible');
+  const x = Math.min(event.clientX, window.innerWidth - menu.offsetWidth - 10);
+  const y = Math.min(event.clientY, window.innerHeight - menu.offsetHeight - 10);
+  menu.style.left = x + 'px';
+  menu.style.top = y + 'px';
 }
 
 function hideCtxMenu() {
-  document.getElementById('ctx-menu').classList.remove('visible');
+  const menu = document.getElementById('ctx-menu');
+  menu.classList.remove('visible');
+  menu.innerHTML = '';
   ctxTrainId = null;
   ctxDyzurkaId = null;
 }
@@ -2814,6 +3430,14 @@ document.addEventListener('keydown', e => {
     if (document.getElementById('page-login').classList.contains('active')) doDiscordLogin();
   }
 });
+
+/* ═══════════════════════════════════════════════════════════════
+   ADMIN — WIDOK DYŻURNEGO
+═══════════════════════════════════════════════════════════════ */
+function adminViewAsDyzurny() {
+  showPage('dashboard');
+  renderDashboard();
+}
 
 /* ═══════════════════════════════════════════════════════════════
    BOOT
