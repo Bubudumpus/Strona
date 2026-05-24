@@ -1867,12 +1867,6 @@
           </div>
           <div class="edr-filters">
             <div>
-              <div class="edr-filter-title">Potwierdzenie przez dyspozytora</div>
-              <label><input type="radio" checked> wszystkie</label>
-              <label><input type="radio"> potwierdz.</label>
-              <label><input type="radio"> nie potwierdz.</label>
-            </div>
-            <div>
               <div class="edr-filter-title">Pociągi</div>
               <label><input type="radio" checked> wszystkie</label>
               <label><input type="radio"> uruch.+koń.</label>
@@ -2529,10 +2523,10 @@ function toggleDyzurka(id) {
    ADMIN — MATRYCA UPRAWNIEŃ
 ═══════════════════════════════════════════════════════════════ */
 function renderPermSelect() {
-  const users = DB.get('users').filter(u => u.role !== 'admin');
+  const users = DB.get('users');
   const sel = document.getElementById('perm-user-select');
-  sel.innerHTML = '<option value="">— wybierz dyżurnego —</option>' +
-    users.map(u => `<option value="${u.id}">${u.fullname || u.login} (${u.login})</option>`).join('');
+  sel.innerHTML = '<option value="">— wybierz użytkownika —</option>' +
+    users.map(u => `<option value="${u.id}">${u.fullname || u.login} (${u.login}) · ${u.role === 'admin' ? 'Administrator' : 'Dyżurny'}</option>`).join('');
 }
 
 let selectedPerms = new Set();
